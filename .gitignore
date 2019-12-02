@@ -22,3 +22,4 @@ cython.py
 matplotlib-3.1.1-py3.6-nspkg.pth
 pyparsing.py
 six.py
+/venv
