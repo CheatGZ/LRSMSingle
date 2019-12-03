@@ -340,6 +340,7 @@ class Document(QWidget, ProjectDocument):
 
     def get_sub_image_in(self, item: SelectionItem) -> [QImage, None]:
 
+
         rect = item.rectangle()
         if self.is_big_img:
             """"""
