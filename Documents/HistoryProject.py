@@ -8,7 +8,7 @@
 
 from PyQt5.QtWidgets import QGraphicsView
 from PyQt5.QtCore import QObject, Qt
-from PyQt5.QtGui import QColor
+from PyQt5.QtGui import QColor, QPixmap
 from UILayer.Workbench.GraphicsView import GraphicsView
 from Documents.ProjectDocument import ProjectDocument
 from UILayer.Workbench.BorderItem import OutlineItem
@@ -99,9 +99,13 @@ class HistoryProjectManager(QObject):
             self._history_projects[index].set_scale(self._workbench_view.transform().m11())
             self.set_scene(self._history_projects[index])
 
+    # 设置预览结果的背景(以黑色与原图相同大小的图片为背景)
     def browser_result(self):
-        self._workbench_view.setBackgroundBrush(QColor(Qt.black))
-        self._current_project.get_pixmap_item().setVisible(False)
+        # self._workbench_view.setBackgroundBrush(QColor(Qt.black))
+        # self._current_project.get_pixmap_item().setVisible(False)
+        pixmap = QPixmap(self._current_project.get_pixmap().width(), self._current_project.get_pixmap().height())
+        pixmap.fill(QColor(Qt.black))
+        self._current_project.get_pixmap_item().setPixmap(pixmap)
         [item.is_browser_result(True) for item in
          self._current_project.get_scene().items() if isinstance(item, OutlineItem)]
 
@@ -109,8 +113,8 @@ class HistoryProjectManager(QObject):
         #     item.is_browser_result(True)
 
     def end_browser(self):
-        self._workbench_view.setBackgroundBrush(QColor(147, 147, 147))
-        self._current_project.get_pixmap_item().setVisible(True)
-
+        # self._workbench_view.setBackgroundBrush(QColor(147, 147, 147))
+        # self._current_project.get_pixmap_item().setVisible(True)
+        self._current_project.get_pixmap_item().setPixmap(self._current_project.get_pixmap())
         [item.is_browser_result(False) for item in
          self._current_project.get_scene().items() if isinstance(item, OutlineItem)]

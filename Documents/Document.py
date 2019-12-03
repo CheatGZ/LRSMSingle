@@ -7,7 +7,7 @@
 # @Software: PyCharm
 import numpy as np
 
-from PyQt5.QtGui import QColor, QImage, QPolygonF, QPen
+from PyQt5.QtGui import QColor, QImage, QPolygonF, QPen, QPixmap
 from PyQt5.QtWidgets import QWidget, QUndoStack, \
     QAction, QGraphicsItem, QMessageBox, QVBoxLayout, QSplitter
 from PyQt5.QtCore import Qt, QPoint, pyqtSignal, QRect, QRectF
@@ -27,6 +27,8 @@ from UILayer.CustomWidget.Thumbnail import Thumbnail
 from Documents.ProjectDocument import ProjectDocument
 from Manager.MarkItemManager import MarkItemManager
 from Algorithm.AIAlgorithm.AiDetect import detect_one
+
+
 # from loadbig.load_big_graphicsview import LoadIMGraphicsView
 # from loadbig.util import is_img_big
 # from loadbig.slide_helper import SlideHelper
@@ -315,17 +317,22 @@ class Document(QWidget, ProjectDocument):
         self._eraser_size = eraser_size
         self.workbench_view.set_eraser_size(eraser_size)
 
+    # 设置预览结果的背景(以黑色与原图相同大小的图片为背景)
     def browser_result(self):
-        self.workbench_view.setBackgroundBrush(QColor(Qt.black))
-        self._pixmap_item.setVisible(False)
+        # self.workbench_view.setBackgroundBrush(QColor(Qt.black))
+        # self._pixmap_item.setVisible(False)
+        pixmap = QPixmap(self.get_pixmap().width(), self.get_pixmap().height())
+        pixmap.fill(QColor(Qt.black))
+        self._pixmap_item.setPixmap(pixmap)
         if self.workbench_view.is_comparing():
             self._history_project_manager.browser_result()
         if self._selection_item:
             self._selection_item.setVisible(False)
 
     def end_browser(self):
-        self.workbench_view.setBackgroundBrush(QColor(147, 147, 147))
-        self._pixmap_item.setVisible(True)
+        # self.workbench_view.setBackgroundBrush(QColor(147, 147, 147))
+        # self._pixmap_item.setVisible(True)
+        self._pixmap_item.setPixmap(self.get_pixmap())
         if self.workbench_view.is_comparing():
             self._history_project_manager.end_browser()
         if self._selection_item:

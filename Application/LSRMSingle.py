@@ -5,7 +5,6 @@
 # @File    : LSRMSingle.py
 # @Project : LSRMSingalVersion3
 # @Software: PyCharm
-
 import sys
 # import time
 # from PyQt5.QtGui import QPixmap

@@ -69,7 +69,7 @@ class NewProjectDialog(QDialog):
 
         self.project_name_edit.setText("test1")
         self.person_name_edit.setText("test")
-        self.project_location_edit.setText("F:/")
+        self.project_location_edit.setText("")
 
     def _get_project_location(self):
         project_directory = QFileDialog.getExistingDirectory(
@@ -119,7 +119,7 @@ class NewProjectDialog(QDialog):
         # project_name = self.project_name_edit.text()
 
         try:
-            if not os.path.exists(project_directory[:3]):
+            if not os.path.exists(project_directory[:]):
                 raise ProjectDirError
         except ProjectDirError:
             QMessageBox.critical(self, "新建项目", "项目位置无效，请输入正确的项目位置！")
