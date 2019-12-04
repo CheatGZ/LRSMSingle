@@ -9,6 +9,7 @@ import sys
 # import time
 # from PyQt5.QtGui import QPixmap
 # from PyQt5.QtCore import Qt
+
 from Application import ImagesRes  # 这个必要，要初始化资源
 from PyQt5.QtWidgets import QApplication, QStyleFactory  # , QSplashScreen
 from UILayer.MainWindowPk.MainWindow import MainWindow, QPixmapCache

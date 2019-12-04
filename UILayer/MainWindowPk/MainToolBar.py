@@ -232,6 +232,7 @@ class ToolsToolBar(QToolBar):
         MagicTool = 4
         BrowserImageTool = 5
         MoveImageTool = 6
+        HandGripTool = 7
 
     MoveImageTool = Tools.MoveImageTool
     BrowserImageTool = Tools.BrowserImageTool
@@ -239,6 +240,7 @@ class ToolsToolBar(QToolBar):
     RectangleTool = Tools.RectangleTool
     PolygonTool = Tools.PolygonTool
     MagicTool = Tools.MagicTool
+    HandGripTool = Tools.HandGripTool
     del Tools
 
     selection_option_changed = pyqtSignal(QAction)
@@ -258,6 +260,7 @@ class ToolsToolBar(QToolBar):
         self._rectangle_tool = ActionManager.action(Id("Rectangle"))
         self._polygon_tool = ActionManager.action(Id("Polygon"))
         self._magic_tool = QAction()
+        self._hand_grip = QAction()   # 抓手功能的创建
 
         self._browser_result_tool.setIcon(QIcon(":/plugin.png"))
         self._browser_result_tool.setCheckable(True)
@@ -285,18 +288,26 @@ class ToolsToolBar(QToolBar):
         self._magic_tool.setToolTip("魔法棒")
         self._magic_tool.setData(ToolsToolBar.MagicTool)
 
+        # 抓手图标的设置
+        self._hand_grip.setIcon(QIcon(":/stock-tool-move-22.png"))
+        self._hand_grip.setCheckable(True)
+        self._hand_grip.setToolTip("平移工具")
+        self._hand_grip.setData(ToolsToolBar.HandGripTool)
+
         self._tools_group = QActionGroup(self)
         self._tools_group.addAction(self._eraser_tool)
         self._tools_group.addAction(self._rectangle_tool)
         self._tools_group.addAction(self._polygon_tool)
         self._tools_group.addAction(self._magic_tool)
         self._tools_group.addAction(self._browser_result_tool)
+        self._tools_group.addAction(self._hand_grip)  #抓手
 
         self.addAction(self._browser_result_tool)
         self.addAction(self._eraser_tool)
         self.addAction(self._rectangle_tool)
         self.addAction(self._polygon_tool)
         self.addAction(self._magic_tool)
+        self.addAction(self._hand_grip)  #抓手
 
         self._tools_group.triggered.connect(self.checked_action_changed)
         self._tools_group.triggered.connect(self.tools_changed)
@@ -331,9 +342,6 @@ class ToolsToolBar(QToolBar):
     def eraser_toolbar(self):
         return self._eraser_option_toolbar
 
-    def eraser_toolbar(self):
-        return self._eraser_option_toolbar
-
     def setHidden(self, hidden: bool) -> None:
         if hidden:
             self._eraser_option_toolbar.setHidden(hidden)
@@ -357,6 +365,7 @@ class ToolsToolBar(QToolBar):
         ActionManager.register_action(self._rectangle_tool, Id("矩形选择框"))
         ActionManager.register_action(self._eraser_tool, Id("多边形选择框"))
         ActionManager.register_action(self._eraser_tool, Id("魔法棒"))
+        ActionManager.register_action(self._hand_grip, Id("抓手"))
 
 
 class ToolPopuplAction(QAction):
