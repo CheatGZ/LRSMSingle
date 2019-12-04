@@ -444,7 +444,7 @@ class OutlineItem(BorderItem):
         color = QColor(self._mark_item.color)
         if self._mark_item.clarity:
             color.setAlpha(60)
-        print("透明度: ", self._mark_item.color.alpha())
+        # print("透明度: ", self._mark_item.color.alpha())
         if self._mark_item.fill or self._is_browser_result:
             brush = QBrush(color)
             painter.fillPath(self._mark_item.get_outline(), brush)
