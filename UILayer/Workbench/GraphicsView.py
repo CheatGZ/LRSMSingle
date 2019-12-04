@@ -11,7 +11,6 @@ from Manager.MarkItemManager import MarkItemManager
 
 
 class GraphicsView(QGraphicsView):
-
     vertical_scrollbar_value_changed = pyqtSignal(int, int)
     horizontal_scrollbar_value_changed = pyqtSignal(int, int)
     transform_changed_signal = pyqtSignal(QTransform)
@@ -209,6 +208,7 @@ class GraphicsViewTest(GraphicsView):
 
         # 上一次鼠标触发的位置
         self.is_mouse_pressed = False
+        self.is_key_pressed = False  # 检测键盘按键是否是被按下的状态
         self.is_dragging = False
         self.has_moving_mouse = False
         self.is_creating_border = False
@@ -245,6 +245,8 @@ class GraphicsViewTest(GraphicsView):
             self.setCursor(Qt.OpenHandCursor)
         elif self.gadget == ToolsToolBar.EraserTool:
             self.setCursor(QCursor(self._eraser_cursor_img))
+        elif self.gadget == ToolsToolBar.HandGripTool:
+            self.setCursor(Qt.OpenHandCursor)
         else:
             self.setCursor(Qt.ArrowCursor)
 
@@ -259,6 +261,8 @@ class GraphicsViewTest(GraphicsView):
         mouse_point = event.pos()
         if self.gadget == ToolsToolBar.RectangleTool:
             self.creating_item(mouse_point, event.modifiers() & Qt.ShiftModifier)
+        if self.gadget == ToolsToolBar.HandGripTool:
+            self._is_move = True;
 
     def creating_selection_item(self, mouse_point: QPoint, is_same: bool = False):
 
@@ -419,7 +423,8 @@ class GraphicsViewTest(GraphicsView):
         if isinstance(pressed_item, OutlineItem):
             self._mark_item_manager.set_selected_item(pressed_item)
 
-        if self.gadget == ToolsToolBar.MoveImageTool:
+        if self.gadget == ToolsToolBar.HandGripTool:
+            self.setCursor(Qt.ClosedHandCursor)
             self.is_mouse_pressed = True
             event.accept()
             return
@@ -480,7 +485,9 @@ class GraphicsViewTest(GraphicsView):
         """"""
         if self.gadget == ToolsToolBar.BrowserImageTool:
             self.setCursor(Qt.OpenHandCursor)
-
+        if self.gadget == ToolsToolBar.HandGripTool:
+            self.setCursor(Qt.OpenHandCursor)
+            self._is_move = False
         if self.is_mouse_pressed:
             if not self.has_moving_mouse:
                 self.click_signal.emit(event)
@@ -495,11 +502,10 @@ class GraphicsViewTest(GraphicsView):
             QGraphicsView.mouseReleaseEvent(self, event)
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
-
-        if event.key() == Qt.Key_Space:
+        if event.key() == Qt.Key_Space and not self.is_key_pressed:
+            self.is_key_pressed = True;
             self.temp_gadget = self.gadget
-            self.set_gadget(ToolsToolBar.MoveImageTool)
-            self._is_move = True
+            self.set_gadget(ToolsToolBar.HandGripTool)
         if event.key() == Qt.Key_Shift and self.is_creating_polygon:
             try:
                 self.created_polygon()
@@ -508,8 +514,8 @@ class GraphicsViewTest(GraphicsView):
 
     def keyReleaseEvent(self, event: QKeyEvent) -> None:
         if event.key() == Qt.Key_Space:
-            self.set_gadget(self.temp_gadget)
-            self._is_move = False
+            if self.is_key_pressed:
+                self.set_gadget(self.temp_gadget)
         elif event.key() == Qt.Key_B and event.modifiers() & Qt.ControlModifier and self.polygon_points:
             self.polygon_points.pop()
             if not self.polygon_points:
@@ -518,3 +524,4 @@ class GraphicsViewTest(GraphicsView):
                 self.border = None
             elif self.border:
                 self.border.set_item_path_by_path(self.counter_polygon_path())
+        self.is_key_pressed = False
