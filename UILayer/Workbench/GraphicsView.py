@@ -93,6 +93,7 @@ class GraphicsView(QGraphicsView):
     def is_comparing(self):
         return self._is_comparing
 
+    # 鼠标拖动图片移动
     def browser_by_mouse_move(self, mouse_point: QPoint):
         dx = mouse_point.x() - self.last_cursor_pos.x()
         dy = mouse_point.y() - self.last_cursor_pos.y()
@@ -194,7 +195,7 @@ class GraphicsViewTest(GraphicsView):
         # 设置拖拽描述 橡皮筋？
 
         self.border = None
-        self.temp_border = None
+        self.temp_border: SelectionItem
         self.clicked_time = 0.
         # 要画的图形的形状
         self.gadget = gadget
@@ -214,6 +215,7 @@ class GraphicsViewTest(GraphicsView):
         self.is_creating_border = False
         self.is_creating_polygon = False
         self.last_cursor_pos = QPoint()
+        self.old_last_cursor_pos = QPoint()
         self.polygon_points = []
 
         self._eraser_cursor_img = QPixmap(QImage(":/circle-cursor.png"))
@@ -262,7 +264,7 @@ class GraphicsViewTest(GraphicsView):
         if self.gadget == ToolsToolBar.RectangleTool:
             self.creating_item(mouse_point, event.modifiers() & Qt.ShiftModifier)
         if self.gadget == ToolsToolBar.HandGripTool:
-            self._is_move = True;
+            self._is_move = True
 
     def creating_selection_item(self, mouse_point: QPoint, is_same: bool = False):
 
@@ -282,6 +284,7 @@ class GraphicsViewTest(GraphicsView):
             self.border.set_item_path_by_size(width=width, height=height)
         except Exception as e:
             print("set item error: ", e)
+        self.temp_border = self.border
 
     def counter_size(self, point1, point2, mouse_point, is_same):
         d_point = point1 - point2
@@ -316,8 +319,18 @@ class GraphicsViewTest(GraphicsView):
         :param event:
         :return:
         """
+        # if self.adjust_mouse_position(event):
+        #     self.border_moved()
         if self.is_creating_border and self.border:
             self.created_border()
+
+    # def adjust_mouse_position(self, event: QMouseEvent):
+    #     print("globalPos: ", event.globalPos())
+    #     print("border", self.border)
+    #     if self.last_cursor_pos.x() < 100 and self.last_cursor_pos.y() < 100:
+    #         return True
+    #     else:
+    #         return False
 
     def border_moved(self):
         self.border_moved_signal.emit(self.border)
@@ -503,7 +516,7 @@ class GraphicsViewTest(GraphicsView):
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         if event.key() == Qt.Key_Space and not self.is_key_pressed:
-            self.is_key_pressed = True;
+            self.is_key_pressed = True
             self.temp_gadget = self.gadget
             self.set_gadget(ToolsToolBar.HandGripTool)
         if event.key() == Qt.Key_Shift and self.is_creating_polygon:
@@ -511,6 +524,27 @@ class GraphicsViewTest(GraphicsView):
                 self.created_polygon()
             except Exception as e:
                 print(e)
+        # 方向键移动图片
+        if event.key() == Qt.Key_Up:
+            dy = 50
+            vertical_scrollbar = self.verticalScrollBar()
+            if vertical_scrollbar.isVisible():
+                vertical_scrollbar.setValue(vertical_scrollbar.value() - dy)
+        elif event.key() == Qt.Key_Down:
+            dy = -50
+            vertical_scrollbar = self.verticalScrollBar()
+            if vertical_scrollbar.isVisible():
+                vertical_scrollbar.setValue(vertical_scrollbar.value() - dy)
+        elif event.key() == Qt.Key_Right:
+            dx = -50
+            horizontal_scrollbar = self.horizontalScrollBar()
+            if horizontal_scrollbar.isVisible():
+                horizontal_scrollbar.setValue(horizontal_scrollbar.value() - dx)
+        elif event.key() == Qt.Key_Left:
+            dx = 50
+            horizontal_scrollbar = self.horizontalScrollBar()
+            if horizontal_scrollbar.isVisible():
+                horizontal_scrollbar.setValue(horizontal_scrollbar.value() - dx)
 
     def keyReleaseEvent(self, event: QKeyEvent) -> None:
         if event.key() == Qt.Key_Space:

@@ -43,7 +43,7 @@ if __name__ == '__main__':
 
     app = QApplication(sys.argv)
     progress = Progress()
-    progress.setToolTip("正在导出， 请闹心等待")
+    progress.setToolTip("正在导出， 请静心等待")
     progress.show()
     progress.test()
     sys.exit(app.exec_())

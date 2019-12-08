@@ -103,7 +103,7 @@ class ActionManager(QObject):
             ActionManager.instance().actions_changed.emit()
         except AssertionError as e:
             """"""
-            print("ActionManager action id = {0} 重复" .format(action_id))
+            print("ActionManager action id = {0} 重复".format(action_id))
 
     @staticmethod
     def unregister_action(action_id: Id):

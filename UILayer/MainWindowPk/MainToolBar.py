@@ -300,14 +300,14 @@ class ToolsToolBar(QToolBar):
         self._tools_group.addAction(self._polygon_tool)
         self._tools_group.addAction(self._magic_tool)
         self._tools_group.addAction(self._browser_result_tool)
-        self._tools_group.addAction(self._hand_grip)  #抓手
+        self._tools_group.addAction(self._hand_grip)  # 抓手
 
         self.addAction(self._browser_result_tool)
         self.addAction(self._eraser_tool)
         self.addAction(self._rectangle_tool)
         self.addAction(self._polygon_tool)
         self.addAction(self._magic_tool)
-        self.addAction(self._hand_grip)  #抓手
+        self.addAction(self._hand_grip)  # 抓手
 
         self._tools_group.triggered.connect(self.checked_action_changed)
         self._tools_group.triggered.connect(self.tools_changed)
