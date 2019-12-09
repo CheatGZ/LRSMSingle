@@ -16,6 +16,8 @@ class GraphicsView(QGraphicsView):
     transform_changed_signal = pyqtSignal(QTransform)
     view_zoom_signal = pyqtSignal(float)
 
+    eraser_zoom_signal = pyqtSignal(float)
+
     # 滚动条互斥锁
     _vertical_scrollbar_locked = False
     _horizontal_scrollbar_locked = False
@@ -155,21 +157,21 @@ class GraphicsView(QGraphicsView):
     def wheelEvent(self, event: QWheelEvent) -> None:
         """"""
         d_value = event.angleDelta().y() / 120
-        d_value = -4 * d_value
+        d_value = -10 * d_value
         if event.modifiers() & Qt.ShiftModifier:
             horizontal_scrollbar = self.horizontalScrollBar()
             if horizontal_scrollbar.isVisible():
                 value = horizontal_scrollbar.value()
-                horizontal_scrollbar.setValue(value + 5 * d_value)
+                horizontal_scrollbar.setValue(value + d_value)
         elif event.modifiers() & Qt.ControlModifier:
-
             factor = 1.09 if d_value < 0 else 0.91
+            self.eraser_zoom_signal.emit(factor)
             self.zoom_by_given_factor(factor, factor)
         else:
             vertical_scrollbar = self.verticalScrollBar()
             if vertical_scrollbar.isVisible():
                 value = vertical_scrollbar.value()
-                vertical_scrollbar.setValue(value + 5 * d_value)
+                vertical_scrollbar.setValue(value + d_value)
 
 
 class GraphicsViewTest(GraphicsView):
@@ -186,9 +188,11 @@ class GraphicsViewTest(GraphicsView):
     dragged_signal = pyqtSignal(QMouseEvent)
     border_created = pyqtSignal(BorderItem)
     border_moved_signal = pyqtSignal(SelectionItem)
+    set_tool_gadget_signal = pyqtSignal(int)
 
     about_to_create_border = pyqtSignal(QPoint)
     current_tool_changed_signal = pyqtSignal()
+    toolbar_gadget_changed_signal = pyqtSignal()
     eraser_action_signal = pyqtSignal(BorderItem)
 
     def __init__(self, item_manager: MarkItemManager, gadget=None, toolbar_gadget=None, eraser_size=3, parent=None):
@@ -198,12 +202,14 @@ class GraphicsViewTest(GraphicsView):
         self.border = None
         self.temp_border: SelectionItem
         self.clicked_time = 0.
-        # 要画的图形的形状
+        # 工具栏的工具
         self.gadget = gadget
         self.toolbar_gadget = toolbar_gadget
         # 当使用快捷键是可能会临时改变gadget 这个用来保存原来的gadget
         self.temp_gadget = self.gadget
         self.temp_cursor = self.cursor()
+        # 设置临时快捷键存储当前工具栏的状态，空格释放后返回
+        self.temp_shortcut = 3
 
         self._mark_item_manager = item_manager
         self._eraser_size = eraser_size
@@ -221,6 +227,9 @@ class GraphicsViewTest(GraphicsView):
         self.polygon_points = []
 
         self._eraser_cursor_img = QPixmap(QImage(":/circle-cursor.png"))
+        self._eraser_cursor_img = self._eraser_cursor_img.scaled(self._eraser_cursor_img.height() + 50,
+                                                                 self._eraser_cursor_img.width() + 50,
+                                                                 Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
         self._zoom_in_img = QPixmap(QImage(":/in.png")).scaled(20, 20, Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
         self._zoom_out_img = QPixmap(QImage(":/out.png")).scaled(20, 20, Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
 
@@ -228,6 +237,7 @@ class GraphicsViewTest(GraphicsView):
         self.dragging_signal.connect(self.left_mouse_press_and_moving)
         self.dragged_signal.connect(self.left_mouse_moved_and_release)
         self.current_tool_changed_signal.connect(self.current_tool_changed)
+        self.eraser_zoom_signal.connect(self.eraser_img_set)
 
     def get_border_item(self):
         return self.border
@@ -237,6 +247,16 @@ class GraphicsViewTest(GraphicsView):
 
     def set_eraser_size(self, eraser_size):
         self._eraser_size = eraser_size
+
+    # cheatGZ eraser_img_set
+    def eraser_img_set(self, factor):
+        print("cheatGZ 1", self.transform().m11(), self.transform().m22())
+        if self.gadget == ToolsToolBar.EraserTool:
+            cursor_img = self._eraser_cursor_img.scaled(self.transform().m11() * self._eraser_size,
+                                                        self.transform().m11() * self._eraser_size,
+                                                        Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
+            print(str(cursor_img.height()), str(cursor_img.width()))
+            self.setCursor(QCursor(cursor_img))
 
     def set_gadget(self, shape):
         self.gadget = shape
@@ -248,7 +268,10 @@ class GraphicsViewTest(GraphicsView):
         elif self.gadget == ToolsToolBar.PolygonTool:
             self.setCursor(Qt.ArrowCursor)
         elif self.gadget == ToolsToolBar.EraserTool:
-            self.setCursor(QCursor(self._eraser_cursor_img))
+            cursor_img = self._eraser_cursor_img.scaled(self.transform().m11() * self._eraser_size,
+                                                        self.transform().m11() * self._eraser_size,
+                                                        Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
+            self.setCursor(QCursor(cursor_img))
         elif self.gadget == ToolsToolBar.HandGripTool:
             self.setCursor(Qt.OpenHandCursor)
         elif self.gadget == ToolsToolBar.ZoomInTool:
@@ -290,7 +313,6 @@ class GraphicsViewTest(GraphicsView):
             self.border.set_item_path_by_size(width=width, height=height)
         except Exception as e:
             print("set item error: ", e)
-        self.temp_border = self.border
 
     def counter_size(self, point1, point2, mouse_point, is_same):
         d_point = point1 - point2
@@ -347,7 +369,6 @@ class GraphicsViewTest(GraphicsView):
         :param event:
         :return:
         """
-
 
     def set_item_focus(self, position):
         """
@@ -413,8 +434,14 @@ class GraphicsViewTest(GraphicsView):
     def eraser_action(self, pos: QPoint):
         pos = self.mapToScene(pos)
         path = QPainterPath()
+
+        cursor_img = self._eraser_cursor_img.scaled(self.transform().m11() * (self._eraser_size * 2),
+                                                    self.transform().m11() * (self._eraser_size * 2),
+                                                    Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
+        self.setCursor(QCursor(cursor_img))
+
         path.addEllipse(QPoint(0, 0), self._eraser_size, self._eraser_size)
-        eraser_area = SelectionItem(pos, path=path, view_scale=1, scene=self.scene())
+        eraser_area = SelectionItem(pos, path=path, view_scale=1, scene=self.scene(), shape=ToolsToolBar.EraserTool)
         eraser_area.setVisible(False)
         self.eraser_action_signal.emit(eraser_area)
 
@@ -530,15 +557,19 @@ class GraphicsViewTest(GraphicsView):
         if event.key() == Qt.Key_Space and not self.is_key_pressed:
             self.is_key_pressed = True
             self.temp_gadget = self.gadget
+            if self.gadget == ToolsToolBar.BrowserImageTool:
+                self.temp_shortcut = 1
+            elif self.gadget == ToolsToolBar.EraserTool:
+                self.temp_shortcut = 2
+            elif self.gadget == ToolsToolBar.RectangleTool:
+                self.temp_shortcut = 3
+            elif self.gadget == ToolsToolBar.PolygonTool:
+                self.temp_shortcut = 4
+            elif self.gadget == ToolsToolBar.MagicTool:
+                self.temp_shortcut = 5
+            elif self.gadget == ToolsToolBar.HandGripTool:
+                self.temp_shortcut = 6
             self.set_gadget(ToolsToolBar.HandGripTool)
-        if not self.is_key_pressed and event.key() == Qt.Key_Control:
-            self.is_key_pressed = True
-            self.temp_gadget = self.gadget
-            if self.gadget == ToolsToolBar.ZoomInTool:
-                self.set_gadget(ToolsToolBar.ZoomOutTool)
-            elif self.gadget == ToolsToolBar.ZoomOutTool:
-                self.set_gadget(ToolsToolBar.ZoomInTool)
-
         if event.key() == Qt.Key_Shift and self.is_creating_polygon:
             try:
                 self.created_polygon()
@@ -565,10 +596,36 @@ class GraphicsViewTest(GraphicsView):
             horizontal_scrollbar = self.horizontalScrollBar()
             if horizontal_scrollbar.isVisible():
                 horizontal_scrollbar.setValue(horizontal_scrollbar.value() - dx)
+        # 工具栏快捷键
+        elif event.key() == Qt.Key_1:
+            self.temp_shortcut = 1
+            self.set_tool_gadget_signal.emit(1)
+            self.set_gadget(ToolsToolBar.BrowserImageTool)
+        elif event.key() == Qt.Key_2:
+            self.temp_shortcut = 2
+            self.set_tool_gadget_signal.emit(2)
+            self.set_gadget(ToolsToolBar.EraserTool)
+        elif event.key() == Qt.Key_3:
+            self.temp_shortcut = 3
+            self.set_tool_gadget_signal.emit(3)
+            self.set_gadget(ToolsToolBar.RectangleTool)
+        elif event.key() == Qt.Key_4:
+            self.temp_shortcut = 4
+            self.set_tool_gadget_signal.emit(4)
+            self.set_gadget(ToolsToolBar.PolygonTool)
+        elif event.key() == Qt.Key_5:
+            self.temp_shortcut = 5
+            self.set_tool_gadget_signal.emit(5)
+            self.set_gadget(ToolsToolBar.MagicTool)
+        elif event.key() == Qt.Key_6:
+            self.temp_shortcut = 6
+            self.set_tool_gadget_signal.emit(6)
+            self.set_gadget(ToolsToolBar.HandGripTool)
 
     def keyReleaseEvent(self, event: QKeyEvent) -> None:
-        if event.key() == Qt.Key_Space or event.key() == Qt.Key_Control:
+        if event.key() == Qt.Key_Space:
             if self.is_key_pressed:
+                self.set_tool_gadget_signal.emit(self.temp_shortcut)
                 self.set_gadget(self.temp_gadget)
         elif event.key() == Qt.Key_B and event.modifiers() & Qt.ControlModifier and self.polygon_points:
             self.polygon_points.pop()

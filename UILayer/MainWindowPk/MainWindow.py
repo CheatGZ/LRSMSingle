@@ -2,7 +2,7 @@ import os
 import sys
 
 from PyQt5.QtCore import Qt, pyqtSignal, QFile, QSettings, QTimer, QVariant
-from PyQt5.QtGui import QPalette, QColor, QPixmapCache, QIcon
+from PyQt5.QtGui import QPalette, QColor, QPixmapCache, QIcon, QKeyEvent
 from PyQt5.QtWidgets import QMainWindow, QTabWidget, QFileDialog, QMessageBox, QUndoGroup, QApplication, QAction
 
 from IOFormat.MarkFile import ProjectFormat, Stream
@@ -32,7 +32,6 @@ class WindowStateData(object):
 
 
 class MainWindow(QMainWindow, MainWindowUI):
-
     toolbar_gadget_changed_signal = pyqtSignal(ToolbarState)
 
     def __init__(self, parent=None):
@@ -704,6 +703,8 @@ class MainWindow(QMainWindow, MainWindowUI):
             eraser_size=self._eraser_toolbar.current_eraser_size(),
         )
         new_doc.reader_format = reader_format
+        new_doc.set_shortcut_gadget_signal.connect(self.set_shortcut_gadget)
+
         return self.open_document(project, new_doc)
 
     def create_document_by_other_img_path(self, project_path, image_path, is_change_img_path):
@@ -726,7 +727,7 @@ class MainWindow(QMainWindow, MainWindowUI):
         new_doc.reader_format = reader_format
         return self.open_document(project, new_doc)
 
-    def open_document(self, project:Project, new_doc: Document):
+    def open_document(self, project: Project, new_doc: Document):
 
         if not self._has_editor:
             self._show_document_widget()
@@ -766,6 +767,7 @@ class MainWindow(QMainWindow, MainWindowUI):
             self._eraser_toolbar.eraser_size_changed.connect(new_doc.eraser_size_changed)
             self._selection_toolbar.selection_option_changed.connect(new_doc.change_toolbar_gadget)
             self._eraser_toolbar.selection_option_changed.connect(new_doc.change_eraser_option)
+            new_doc.set_shortcut_gadget_signal.connect(self.set_shortcut_gadget)
 
             self.add_document(new_doc)
             return "打开文件\"" + file_mame + "\"成功"
@@ -780,6 +782,10 @@ class MainWindow(QMainWindow, MainWindowUI):
             print(e)
             QMessageBox.critical(self, "创建项目", "创建项目失败2：" + e.__str__())
             return " "
+
+    # 通知工具栏根据快捷键改变状态
+    def set_shortcut_gadget(self, shortcut):
+        self._tools_toolbar.set_current_toolbar_gadget(shortcut)
 
     def add_document(self, document: Document):
         self._undo_group.addStack(document.undo_stack())

@@ -8,7 +8,7 @@
 
 from enum import Enum
 from PyQt5.QtWidgets import QToolBar, QToolButton, QMenu, QAction, QActionGroup, QSpinBox
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QKeyEvent
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5 import QtCore
 
@@ -83,7 +83,7 @@ class MainToolBar(QToolBar):
         self.addAction(self._undo_action)
         self.addAction(self._redo_action)
 
-        self.orientationChanged.connect(self.orientation_changed)   # toolbar方向改变
+        self.orientationChanged.connect(self.orientation_changed)  # toolbar方向改变
 
         self._restranslateUi()
 
@@ -104,7 +104,6 @@ class MainToolBar(QToolBar):
 
 
 class SelectionOptionToolBar(QToolBar):
-
     class SelectionOption(Enum):
         Replace = 1
         Add = 2
@@ -207,8 +206,8 @@ class EraserOptionToolBar(QToolBar):
         self.addSeparator()
 
         self._spin_box = QSpinBox(self)
-        self._spin_box.setMinimum(3)
-        self._spin_box.setMaximum(100)
+        self._spin_box.setMinimum(10)
+        self._spin_box.setMaximum(50)
         self.addWidget(self._spin_box)
 
         self._spin_box.valueChanged.connect(self.eraser_size_changed)
@@ -222,7 +221,6 @@ class EraserOptionToolBar(QToolBar):
 
 
 class ToolsToolBar(QToolBar):
-
     tools_changed = pyqtSignal(QAction)
 
     class Tools(Enum):
@@ -263,40 +261,41 @@ class ToolsToolBar(QToolBar):
         self._rectangle_tool = ActionManager.action(Id("Rectangle"))
         self._polygon_tool = ActionManager.action(Id("Polygon"))
         self._magic_tool = QAction()
+        self._hand_grip = QAction()  # 抓手功能的创建
         self._hand_grip = QAction()   # 抓手功能的创建
         self._zoom_out_tool = QAction()
         self._zoom_in_tool = QAction()
 
         self._browser_result_tool.setIcon(QIcon(":/plugin.png"))
         self._browser_result_tool.setCheckable(True)
-        self._browser_result_tool.setToolTip("预览结果")
+        self._browser_result_tool.setToolTip("预览结果(1)")
         self._browser_result_tool.setData(ToolsToolBar.BrowserImageTool)
 
         self._eraser_tool.setIcon(QIcon(":/stock-tool-eraser.png"))
         self._eraser_tool.setCheckable(True)
-        self._eraser_tool.setToolTip("橡皮擦")
+        self._eraser_tool.setToolTip("橡皮擦(2)")
         self._eraser_tool.setData(ToolsToolBar.EraserTool)
 
         self._rectangle_tool.setIcon(QIcon(":/stock-tool-rect-select.png"))
         self._rectangle_tool.setCheckable(True)
         self._rectangle_tool.setChecked(True)
-        self._rectangle_tool.setToolTip("矩形选择框")
+        self._rectangle_tool.setToolTip("矩形选择框(3)")
         self._rectangle_tool.setData(ToolsToolBar.RectangleTool)
 
         self._polygon_tool.setIcon(QIcon(":/tool-edit-polygons.png"))
         self._polygon_tool.setCheckable(True)
-        self._polygon_tool.setToolTip("多边形选择框")
+        self._polygon_tool.setToolTip("多边形选择框(4)")
         self._polygon_tool.setData(ToolsToolBar.PolygonTool)
 
         self._magic_tool.setIcon(QIcon(":/stock-tool-fuzzy-select-22.png"))
         self._magic_tool.setCheckable(True)
-        self._magic_tool.setToolTip("魔法棒")
+        self._magic_tool.setToolTip("魔法棒(5)")
         self._magic_tool.setData(ToolsToolBar.MagicTool)
 
         # 抓手图标的设置
         self._hand_grip.setIcon(QIcon(":/stock-tool-move-22.png"))
         self._hand_grip.setCheckable(True)
-        self._hand_grip.setToolTip("平移工具")
+        self._hand_grip.setToolTip("平移工具(6)")
         self._hand_grip.setData(ToolsToolBar.HandGripTool)
 
         self._zoom_in_tool.setIcon(QIcon(":/zoom-in.png"))
@@ -341,6 +340,27 @@ class ToolsToolBar(QToolBar):
         self._selection_option_toolbar.selection_option_changed.connect(self.selection_option_changed)
         self._eraser_option_toolbar.eraser_size_changed.connect(self.eraser_size_changed)
 
+    # 根据快捷键改变工具选中状态
+    def set_current_toolbar_gadget(self, shortcut):
+        self._eraser_option_toolbar.setHidden(True)
+        self._selection_option_toolbar.setHidden(True)
+        if shortcut == 1:
+            self._browser_result_tool.setChecked(True)
+        elif shortcut == 2:
+            self._eraser_option_toolbar.setHidden(False)
+            self._eraser_tool.setChecked(True)
+        elif shortcut == 3:
+            self._selection_option_toolbar.setHidden(False)
+            self._rectangle_tool.setChecked(True)
+        elif shortcut == 4:
+            self._selection_option_toolbar.setHidden(False)
+            self._polygon_tool.setChecked(True)
+        elif shortcut == 5:
+            self._magic_tool.setChecked(True)
+        elif shortcut == 6:
+            self._hand_grip.setChecked(True)
+
+    # 根据选中状态改变工具栏
     def checked_action_changed(self, action: QAction):
         if action == self._rectangle_tool or action == self._polygon_tool:
             # self._selection_toolbar.setEnabled(True)
@@ -438,10 +458,10 @@ class ToolPopuplAction(QAction):
 
 
 if __name__ == '__main__':
-
     from PyQt5.QtWidgets import QApplication, QMainWindow
     import sys
     import os
+
     app = QApplication(sys.argv)
     print(os.getcwd())
     icon = QIcon(":/document-new.png")
@@ -452,4 +472,3 @@ if __name__ == '__main__':
 
     print(Id("OpenOriginalImage"))
     sys.exit(app.exec_())
-

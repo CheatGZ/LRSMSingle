@@ -7,7 +7,7 @@
 # @Software: PyCharm
 import numpy as np
 
-from PyQt5.QtGui import QColor, QImage, QPolygonF, QPen, QPixmap
+from PyQt5.QtGui import QColor, QImage, QPolygonF, QPen, QPixmap, QCursor
 from PyQt5.QtWidgets import QWidget, QUndoStack, \
     QAction, QGraphicsItem, QMessageBox, QVBoxLayout, QSplitter
 from PyQt5.QtCore import Qt, QPoint, pyqtSignal, QRect, QRectF
@@ -40,6 +40,7 @@ class Document(QWidget, ProjectDocument):
     added_mark_item = pyqtSignal(Project, MarkItem)
     browser_result_signal = pyqtSignal(bool)
     selected_mark_item_changed = pyqtSignal(MarkItem)
+    set_shortcut_gadget_signal = pyqtSignal(int)
 
     def __init__(self, gadget, toolbar_gadget, file_name=None, project_name=None, image_path=None, person_name=None,
                  parent=None, eraser_size=3, eraser_option=SelectionOptionToolBar.Subtract):
@@ -71,6 +72,7 @@ class Document(QWidget, ProjectDocument):
         self._history_project_manager = None
         self._mark_item_manager = MarkItemManager()
         self._mark_item_manager.selected_item_changed.connect(self.selected_mark_item_changed)
+        self.last_shortcut = 0
 
         # # 创建场景
         self._workbench_scene.setObjectName("workbench_scene")
@@ -111,6 +113,7 @@ class Document(QWidget, ProjectDocument):
         self.workbench_view.border_created.connect(self.created_border)
         self.workbench_view.about_to_create_border.connect(self.about_to_create_border)
         self.workbench_view.eraser_action_signal.connect(self.eraser_action)
+        self.workbench_view.set_tool_gadget_signal.connect(self.set_short_cut_gadget)
 
         if all([image_path, project_name, file_name]) and not self._is_big_img:
             self.create_document()
@@ -118,6 +121,16 @@ class Document(QWidget, ProjectDocument):
     @property
     def is_big_img(self):
         return self._is_big_img
+
+    # 通知mainwindow改变工具栏状态
+    def set_short_cut_gadget(self, shortcut):
+        if shortcut == 1:
+            self.last_shortcut = 1
+            self.browser_result()
+        elif self.last_shortcut == 1:
+            self.last_shortcut = 0
+            self.end_browser()
+        self.set_shortcut_gadget_signal.emit(shortcut)
 
     def about_to_cmp(self, project_documents: ProjectDocument = None):
         if not self._history_widget:
@@ -317,7 +330,7 @@ class Document(QWidget, ProjectDocument):
         self._eraser_size = eraser_size
         self.workbench_view.set_eraser_size(eraser_size)
 
-    # 设置预览结果的背景(以黑色与原图相同大小的图片为背景)
+    # 设置预览结果的背景(以与原图相同大小的黑色图片为背景)
     def browser_result(self):
         # self.workbench_view.setBackgroundBrush(QColor(Qt.black))
         # self._pixmap_item.setVisible(False)

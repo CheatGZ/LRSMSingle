@@ -1,7 +1,7 @@
 import copy
 
 from PyQt5.QtCore import Qt, QPoint, QTimer, QRectF, pyqtSignal, QRect
-from PyQt5.QtGui import QPainterPath, QPen, QPainter, QBrush, QTransform, QColor
+from PyQt5.QtGui import QPainterPath, QPen, QPainter, QBrush, QTransform, QColor, QPainterPathStroker
 from PyQt5.QtWidgets import QGraphicsObject, QGraphicsItem, QMenu
 
 from CONSTs.CONST import PEN_STANDARD_WIDTH
@@ -127,7 +127,6 @@ class BorderItem(QGraphicsObject):
         return self._item_path.boundingRect().adjusted(0, 0, 2, 2)
 
     def paint(self, painter: QPainter, option, widget=None) -> None:
-
         self._pen.setColor(Qt.white)
         self._pen.setStyle(Qt.SolidLine)
         painter.setPen(self._pen)
@@ -443,7 +442,7 @@ class OutlineItem(BorderItem):
     def paint(self, painter: QPainter, option, widget=None) -> None:
         color = QColor(self._mark_item.color)
         if self._mark_item.clarity:
-            color.setAlpha(60)
+            color.setAlpha(110)
         # print("透明度: ", self._mark_item.color.alpha())
         if self._mark_item.fill or self._is_browser_result:
             brush = QBrush(color)
