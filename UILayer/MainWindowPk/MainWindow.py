@@ -61,17 +61,22 @@ class MainWindow(QMainWindow, MainWindowUI):
 
         self._has_editor = False
 
-        self._property_dock = PropertyBrowserDock(parent=self)
-        self._property_dock.setAllowedAreas(Qt.RightDockWidgetArea | Qt.LeftDockWidgetArea)
-        self.addDockWidget(Qt.LeftDockWidgetArea, self._property_dock)
+        # self._property_dock = PropertyBrowserDock(parent=self)
+        # self._property_dock.setAllowedAreas(Qt.RightDockWidgetArea | Qt.LeftDockWidgetArea)
+        # self.addDockWidget(Qt.LeftDockWidgetArea, self._property_dock)
+        # self.project_dock_widget.current_item_changed_signal.connect(self._property_dock.set_browser)
+
         self.project_dock_widget.current_item_changed_signal.connect(self._property_dock.set_browser)
 
         self._main_toolbar = MainToolBar(self)
         self.addToolBar(self._main_toolbar)
         self._tools_toolbar = ToolsToolBar(self)
-
+        self.addToolBar(Qt.LeftToolBarArea, self._tools_toolbar)
         self._selection_toolbar = self._tools_toolbar.selection_toolbar()
         self._eraser_toolbar = self._tools_toolbar.eraser_toolbar()
+        self.addToolBar(Qt.LeftToolBarArea, self._selection_toolbar)
+        self.addToolBar(Qt.LeftToolBarArea, self._eraser_toolbar)
+
         self.toolbar_gadget = ToolbarState.NONE_SELECTED
 
         self.window_state_data = WindowStateData()

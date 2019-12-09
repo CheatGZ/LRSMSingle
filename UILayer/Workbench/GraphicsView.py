@@ -160,15 +160,16 @@ class GraphicsView(QGraphicsView):
             horizontal_scrollbar = self.horizontalScrollBar()
             if horizontal_scrollbar.isVisible():
                 value = horizontal_scrollbar.value()
-                horizontal_scrollbar.setValue(value + d_value)
+                horizontal_scrollbar.setValue(value + 5 * d_value)
         elif event.modifiers() & Qt.ControlModifier:
+
             factor = 1.09 if d_value < 0 else 0.91
             self.zoom_by_given_factor(factor, factor)
         else:
             vertical_scrollbar = self.verticalScrollBar()
             if vertical_scrollbar.isVisible():
                 value = vertical_scrollbar.value()
-                vertical_scrollbar.setValue(value + d_value)
+                vertical_scrollbar.setValue(value + 5 * d_value)
 
 
 class GraphicsViewTest(GraphicsView):
@@ -211,6 +212,7 @@ class GraphicsViewTest(GraphicsView):
         self.is_mouse_pressed = False
         self.is_key_pressed = False  # 检测键盘按键是否是被按下的状态
         self.is_dragging = False
+        self.is_dragged = False
         self.has_moving_mouse = False
         self.is_creating_border = False
         self.is_creating_polygon = False
@@ -219,6 +221,8 @@ class GraphicsViewTest(GraphicsView):
         self.polygon_points = []
 
         self._eraser_cursor_img = QPixmap(QImage(":/circle-cursor.png"))
+        self._zoom_in_img = QPixmap(QImage(":/in.png")).scaled(20, 20, Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
+        self._zoom_out_img = QPixmap(QImage(":/out.png")).scaled(20, 20, Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
 
         self.click_signal.connect(self.left_mouse_click)
         self.dragging_signal.connect(self.left_mouse_press_and_moving)
@@ -243,12 +247,14 @@ class GraphicsViewTest(GraphicsView):
             self.setCursor(Qt.CrossCursor)
         elif self.gadget == ToolsToolBar.PolygonTool:
             self.setCursor(Qt.ArrowCursor)
-        elif self.gadget == ToolsToolBar.MoveImageTool:
-            self.setCursor(Qt.OpenHandCursor)
         elif self.gadget == ToolsToolBar.EraserTool:
             self.setCursor(QCursor(self._eraser_cursor_img))
         elif self.gadget == ToolsToolBar.HandGripTool:
             self.setCursor(Qt.OpenHandCursor)
+        elif self.gadget == ToolsToolBar.ZoomInTool:
+            self.setCursor(QCursor(self._zoom_in_img))
+        elif self.gadget == ToolsToolBar.ZoomOutTool:
+            self.setCursor(QCursor(self._zoom_out_img))
         else:
             self.setCursor(Qt.ArrowCursor)
 
@@ -311,7 +317,7 @@ class GraphicsViewTest(GraphicsView):
         self.last_cursor_pos = mouse_point
 
     def zoom_by_mouse_click(self, is_in=True):
-        factor = 1.04 if is_in else 0.96
+        factor = 1.25 if is_in else 0.75
         self.zoom_by_given_factor(factor, factor)
 
     def left_mouse_moved_and_release(self, event: QMouseEvent):
@@ -323,6 +329,7 @@ class GraphicsViewTest(GraphicsView):
         #     self.border_moved()
         if self.is_creating_border and self.border:
             self.created_border()
+
 
     # def adjust_mouse_position(self, event: QMouseEvent):
     #     print("globalPos: ", event.globalPos())
@@ -340,6 +347,7 @@ class GraphicsViewTest(GraphicsView):
         :param event:
         :return:
         """
+
 
     def set_item_focus(self, position):
         """
@@ -496,6 +504,10 @@ class GraphicsViewTest(GraphicsView):
 
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
         """"""
+        if  self.gadget == ToolsToolBar.ZoomInTool:
+            self.zoom_by_mouse_click(True)
+        if self.gadget == ToolsToolBar.ZoomOutTool:
+            self.zoom_by_mouse_click(False)
         if self.gadget == ToolsToolBar.BrowserImageTool:
             self.setCursor(Qt.OpenHandCursor)
         if self.gadget == ToolsToolBar.HandGripTool:
@@ -519,6 +531,14 @@ class GraphicsViewTest(GraphicsView):
             self.is_key_pressed = True
             self.temp_gadget = self.gadget
             self.set_gadget(ToolsToolBar.HandGripTool)
+        if not self.is_key_pressed and event.key() == Qt.Key_Control:
+            self.is_key_pressed = True
+            self.temp_gadget = self.gadget
+            if self.gadget == ToolsToolBar.ZoomInTool:
+                self.set_gadget(ToolsToolBar.ZoomOutTool)
+            elif self.gadget == ToolsToolBar.ZoomOutTool:
+                self.set_gadget(ToolsToolBar.ZoomInTool)
+
         if event.key() == Qt.Key_Shift and self.is_creating_polygon:
             try:
                 self.created_polygon()
@@ -547,7 +567,7 @@ class GraphicsViewTest(GraphicsView):
                 horizontal_scrollbar.setValue(horizontal_scrollbar.value() - dx)
 
     def keyReleaseEvent(self, event: QKeyEvent) -> None:
-        if event.key() == Qt.Key_Space:
+        if event.key() == Qt.Key_Space or event.key() == Qt.Key_Control:
             if self.is_key_pressed:
                 self.set_gadget(self.temp_gadget)
         elif event.key() == Qt.Key_B and event.modifiers() & Qt.ControlModifier and self.polygon_points:

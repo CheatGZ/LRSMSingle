@@ -21,6 +21,7 @@ class PropertyBrowserDock(DockWidget):
         center_widget = QWidget(self)
         self._layout = QVBoxLayout(center_widget)
         self._layout.setContentsMargins(6, 6, 0, 6)
+        self.setMinimumHeight(400)
         self.setWidget(center_widget)
         self._has_browser = False
 

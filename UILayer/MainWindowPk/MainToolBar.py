@@ -231,16 +231,19 @@ class ToolsToolBar(QToolBar):
         PolygonTool = 3
         MagicTool = 4
         BrowserImageTool = 5
-        MoveImageTool = 6
-        HandGripTool = 7
+        HandGripTool = 6
+        ZoomInTool = 7
+        ZoomOutTool = 8
 
-    MoveImageTool = Tools.MoveImageTool
     BrowserImageTool = Tools.BrowserImageTool
     EraserTool = Tools.EraserTool
     RectangleTool = Tools.RectangleTool
     PolygonTool = Tools.PolygonTool
     MagicTool = Tools.MagicTool
     HandGripTool = Tools.HandGripTool
+    ZoomInTool = Tools.ZoomInTool
+    ZoomOutTool = Tools.ZoomOutTool
+
     del Tools
 
     selection_option_changed = pyqtSignal(QAction)
@@ -261,6 +264,8 @@ class ToolsToolBar(QToolBar):
         self._polygon_tool = ActionManager.action(Id("Polygon"))
         self._magic_tool = QAction()
         self._hand_grip = QAction()   # 抓手功能的创建
+        self._zoom_out_tool = QAction()
+        self._zoom_in_tool = QAction()
 
         self._browser_result_tool.setIcon(QIcon(":/plugin.png"))
         self._browser_result_tool.setCheckable(True)
@@ -294,6 +299,16 @@ class ToolsToolBar(QToolBar):
         self._hand_grip.setToolTip("平移工具")
         self._hand_grip.setData(ToolsToolBar.HandGripTool)
 
+        self._zoom_in_tool.setIcon(QIcon(":/zoom-in.png"))
+        self._zoom_in_tool.setCheckable(True)
+        self._zoom_in_tool.setToolTip("放大")
+        self._zoom_in_tool.setData(ToolsToolBar.ZoomInTool)
+
+        self._zoom_out_tool.setIcon(QIcon(":/zoom-out.png"))
+        self._zoom_out_tool.setCheckable(True)
+        self._zoom_out_tool.setToolTip("缩小")
+        self._zoom_out_tool.setData(ToolsToolBar.ZoomOutTool)
+
         self._tools_group = QActionGroup(self)
         self._tools_group.addAction(self._eraser_tool)
         self._tools_group.addAction(self._rectangle_tool)
@@ -301,6 +316,8 @@ class ToolsToolBar(QToolBar):
         self._tools_group.addAction(self._magic_tool)
         self._tools_group.addAction(self._browser_result_tool)
         self._tools_group.addAction(self._hand_grip)  # 抓手
+        self._tools_group.addAction(self._zoom_in_tool)
+        self._tools_group.addAction(self._zoom_out_tool)
 
         self.addAction(self._browser_result_tool)
         self.addAction(self._eraser_tool)
@@ -308,6 +325,8 @@ class ToolsToolBar(QToolBar):
         self.addAction(self._polygon_tool)
         self.addAction(self._magic_tool)
         self.addAction(self._hand_grip)  # 抓手
+        self.addAction(self._zoom_in_tool)
+        self.addAction(self._zoom_out_tool)
 
         self._tools_group.triggered.connect(self.checked_action_changed)
         self._tools_group.triggered.connect(self.tools_changed)
@@ -366,6 +385,8 @@ class ToolsToolBar(QToolBar):
         ActionManager.register_action(self._eraser_tool, Id("多边形选择框"))
         ActionManager.register_action(self._eraser_tool, Id("魔法棒"))
         ActionManager.register_action(self._hand_grip, Id("抓手"))
+        ActionManager.register_action(self._zoom_in_tool, Id("放大"))
+        ActionManager.register_action(self._zoom_out_tool, Id("缩小"))
 
 
 class ToolPopuplAction(QAction):

@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QMainWindow, QLabel, QFrame, QActionGroup
 from CommonHelpers.CommonHelper import create_action, add_actions, add_menu, join_group
 from UILayer.CustomWidget.ProjectTreeDockWidget import ProjectDockWidget
 from UILayer.CustomWidget.UndoWidget import UndoDock
-
+from UILayer.CustomWidget.PropertyDock import PropertyBrowserDock
 __version__ = "1.0.0"
 
 
@@ -20,8 +20,12 @@ class MainWindowUI(object):
 
         # 创建 main window的停靠窗口
         dock_widget_limit = Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea
+        # 属性停靠窗口
+        self._property_dock = PropertyBrowserDock(parent=self)
+        self._property_dock.setAllowedAreas(Qt.RightDockWidgetArea | Qt.LeftDockWidgetArea)
+        self.addDockWidget(Qt.RightDockWidgetArea, self._property_dock)
 
-        # 创建项目目录树 停靠窗口
+        # 创建项目目录树 停靠窗口8989m89080m88989898889m8989
         self.project_dock_widget = ProjectDockWidget(parent=self)
         self.project_dock_widget.setAllowedAreas(dock_widget_limit)
         main_window.addDockWidget(Qt.RightDockWidgetArea, self.project_dock_widget)

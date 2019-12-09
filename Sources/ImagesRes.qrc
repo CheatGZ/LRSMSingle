@@ -36,5 +36,9 @@
         <file alias="tiled-icon.ico">Images/tiled-icon.ico</file>
         <file alias="stock-tool-move-22.png">Icons/22x22/stock-tool-move-22.png</file>
         <file alias="ellipse-fill.png">Icons/22x22/ellipse-fill.png</file>
+        <file alias="zoom-in.png">Icons/24x24/zoom-in.png</file>
+        <file alias="zoom-out.png">Icons/24x24/zoom-out.png</file>
+        <file alias="out.png">Icons/缩小.png</file>
+        <file alias="in.png">Icons/放大.png</file>
     </qresource>
 </RCC>
