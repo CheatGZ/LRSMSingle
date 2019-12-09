@@ -2,7 +2,7 @@ import time
 
 from PyQt5.QtCore import pyqtSignal, QPoint, Qt
 from PyQt5.QtGui import QTransform, QPainter, QMouseEvent, QKeyEvent, \
-    QWheelEvent, QImage, QPixmap, QCursor, QPainterPath
+    QWheelEvent, QImage, QPixmap, QCursor, QPainterPath, QBrush, QPen, QPainterPathStroker
 from PyQt5.QtWidgets import QGraphicsView
 
 from UILayer.Workbench.BorderItem import SelectionItem, BorderItem, OutlineItem
@@ -576,23 +576,23 @@ class GraphicsViewTest(GraphicsView):
                 self.created_polygon()
             except Exception as e:
                 print(e)
-        # 方向键和WASD键移动图片
-        if event.key() == Qt.Key_Up:
+        # 方向键移动图片
+        if event.key() == Qt.Key_Up or event.key() == Qt.Key_W:
             dy = 50
             vertical_scrollbar = self.verticalScrollBar()
             if vertical_scrollbar.isVisible():
                 vertical_scrollbar.setValue(vertical_scrollbar.value() - dy)
-        elif event.key() == Qt.Key_Down:
+        elif event.key() == Qt.Key_Down or event.key() == Qt.Key_S:
             dy = -50
             vertical_scrollbar = self.verticalScrollBar()
             if vertical_scrollbar.isVisible():
                 vertical_scrollbar.setValue(vertical_scrollbar.value() - dy)
-        elif event.key() == Qt.Key_Right:
+        elif event.key() == Qt.Key_Right or event.key() == Qt.Key_D:
             dx = -50
             horizontal_scrollbar = self.horizontalScrollBar()
             if horizontal_scrollbar.isVisible():
                 horizontal_scrollbar.setValue(horizontal_scrollbar.value() - dx)
-        elif event.key() == Qt.Key_Left:
+        elif event.key() == Qt.Key_Left or event.key() == Qt.Key_A:
             dx = 50
             horizontal_scrollbar = self.horizontalScrollBar()
             if horizontal_scrollbar.isVisible():
