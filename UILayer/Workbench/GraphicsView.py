@@ -250,12 +250,10 @@ class GraphicsViewTest(GraphicsView):
 
     # cheatGZ eraser_img_set
     def eraser_img_set(self, factor):
-        print("cheatGZ 1", self.transform().m11(), self.transform().m22())
         if self.gadget == ToolsToolBar.EraserTool:
             cursor_img = self._eraser_cursor_img.scaled(self.transform().m11() * self._eraser_size,
                                                         self.transform().m11() * self._eraser_size,
                                                         Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
-            print(str(cursor_img.height()), str(cursor_img.width()))
             self.setCursor(QCursor(cursor_img))
 
     def set_gadget(self, shape):
@@ -351,15 +349,6 @@ class GraphicsViewTest(GraphicsView):
         #     self.border_moved()
         if self.is_creating_border and self.border:
             self.created_border()
-
-
-    # def adjust_mouse_position(self, event: QMouseEvent):
-    #     print("globalPos: ", event.globalPos())
-    #     print("border", self.border)
-    #     if self.last_cursor_pos.x() < 100 and self.last_cursor_pos.y() < 100:
-    #         return True
-    #     else:
-    #         return False
 
     def border_moved(self):
         self.border_moved_signal.emit(self.border)
@@ -569,6 +558,10 @@ class GraphicsViewTest(GraphicsView):
                 self.temp_shortcut = 5
             elif self.gadget == ToolsToolBar.HandGripTool:
                 self.temp_shortcut = 6
+            elif self.gadget == ToolsToolBar.ZoomInTool:
+                self.temp_shortcut = 7
+            elif self.gadget == ToolsToolBar.ZoomOutTool:
+                self.temp_shortcut = 8
             self.set_gadget(ToolsToolBar.HandGripTool)
         if not self.is_key_pressed and event.key() == Qt.Key_Control:
             self.is_key_pressed = True
@@ -583,7 +576,7 @@ class GraphicsViewTest(GraphicsView):
                 self.created_polygon()
             except Exception as e:
                 print(e)
-        # 方向键移动图片
+        # 方向键和WASD键移动图片
         if event.key() == Qt.Key_Up:
             dy = 50
             vertical_scrollbar = self.verticalScrollBar()
@@ -629,6 +622,14 @@ class GraphicsViewTest(GraphicsView):
             self.temp_shortcut = 6
             self.set_tool_gadget_signal.emit(6)
             self.set_gadget(ToolsToolBar.HandGripTool)
+        elif event.key() == Qt.Key_7:
+            self.temp_shortcut = 7
+            self.set_tool_gadget_signal.emit(7)
+            self.set_gadget(ToolsToolBar.ZoomInTool)
+        elif event.key() == Qt.Key_8:
+            self.temp_shortcut = 8
+            self.set_tool_gadget_signal.emit(8)
+            self.set_gadget(ToolsToolBar.ZoomOutTool)
 
     def keyReleaseEvent(self, event: QKeyEvent) -> None:
         if event.key() == Qt.Key_Space or event.key() == Qt.Key_Control:

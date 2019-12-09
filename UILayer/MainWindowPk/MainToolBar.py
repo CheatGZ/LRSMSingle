@@ -300,12 +300,12 @@ class ToolsToolBar(QToolBar):
 
         self._zoom_in_tool.setIcon(QIcon(":/zoom-in.png"))
         self._zoom_in_tool.setCheckable(True)
-        self._zoom_in_tool.setToolTip("放大")
+        self._zoom_in_tool.setToolTip("放大(7)")
         self._zoom_in_tool.setData(ToolsToolBar.ZoomInTool)
 
         self._zoom_out_tool.setIcon(QIcon(":/zoom-out.png"))
         self._zoom_out_tool.setCheckable(True)
-        self._zoom_out_tool.setToolTip("缩小")
+        self._zoom_out_tool.setToolTip("缩小(8)")
         self._zoom_out_tool.setData(ToolsToolBar.ZoomOutTool)
 
         self._tools_group = QActionGroup(self)
@@ -359,6 +359,10 @@ class ToolsToolBar(QToolBar):
             self._magic_tool.setChecked(True)
         elif shortcut == 6:
             self._hand_grip.setChecked(True)
+        elif shortcut == 7:
+            self._zoom_in_tool.setChecked(True)
+        elif shortcut == 8:
+            self._zoom_out_tool.setChecked(True)
 
     # 根据选中状态改变工具栏
     def checked_action_changed(self, action: QAction):
@@ -472,3 +476,4 @@ if __name__ == '__main__':
 
     print(Id("OpenOriginalImage"))
     sys.exit(app.exec_())
+
