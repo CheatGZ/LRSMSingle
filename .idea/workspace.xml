@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
+<<<<<<< Updated upstream
     <list default="true" id="b0562d30-6635-4c9b-a37c-ed1821e05bcd" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/LSRMSingle.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/LSRMSingle.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
@@ -13,6 +14,26 @@
       <change beforePath="$PROJECT_DIR$/UILayer/Workbench/BorderItem.py" beforeDir="false" afterPath="$PROJECT_DIR$/UILayer/Workbench/BorderItem.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UILayer/Workbench/GraphicsView.py" beforeDir="false" afterPath="$PROJECT_DIR$/UILayer/Workbench/GraphicsView.py" afterDir="false" />
     </list>
+||||||| merged common ancestors
+    <list default="true" id="b0562d30-6635-4c9b-a37c-ed1821e05bcd" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/Sources/Icons/放大.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Sources/Icons/缩小.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/LSRMSingle.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/LSRMSingle.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Application/ImagesRes.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Sources/Icons/16x16/zoom-in.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Sources/Icons/16x16/zoom-out.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Sources/ImagesRes.qrc" beforeDir="false" afterPath="$PROJECT_DIR$/Sources/ImagesRes.qrc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UILayer/CustomWidget/PropertyDock.py" beforeDir="false" afterPath="$PROJECT_DIR$/UILayer/CustomWidget/PropertyDock.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UILayer/MainWindowPk/MainToolBar.py" beforeDir="false" afterPath="$PROJECT_DIR$/UILayer/MainWindowPk/MainToolBar.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UILayer/MainWindowPk/MainWindow.py" beforeDir="false" afterPath="$PROJECT_DIR$/UILayer/MainWindowPk/MainWindow.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UILayer/MainWindowPk/MainWindowUi.py" beforeDir="false" afterPath="$PROJECT_DIR$/UILayer/MainWindowPk/MainWindowUi.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UILayer/Workbench/GraphicsView.py" beforeDir="false" afterPath="$PROJECT_DIR$/UILayer/Workbench/GraphicsView.py" afterDir="false" />
+    </list>
+=======
+    <list default="true" id="b0562d30-6635-4c9b-a37c-ed1821e05bcd" name="Default Changelist" comment="" />
+>>>>>>> Stashed changes
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -274,11 +295,37 @@
       <workItem from="1569544937039" duration="22376000" />
       <workItem from="1569814714807" duration="14770000" />
       <workItem from="1574218261501" duration="1977000" />
+<<<<<<< Updated upstream
       <workItem from="1575039462885" duration="116000" />
       <workItem from="1575041297005" duration="466000" />
       <workItem from="1575129031745" duration="10048000" />
       <workItem from="1575297771719" duration="17436000" />
       <workItem from="1575686666000" duration="81500000" />
+||||||| merged common ancestors
+      <workItem from="1575442774894" duration="20000" />
+      <workItem from="1575442798569" duration="1843000" />
+      <workItem from="1575449998624" duration="19000" />
+      <workItem from="1575450567464" duration="7000" />
+      <workItem from="1575508745959" duration="202000" />
+      <workItem from="1575688547099" duration="8443000" />
+      <workItem from="1575786577728" duration="15604000" />
+      <workItem from="1575859209486" duration="2728000" />
+      <workItem from="1575874066680" duration="361000" />
+      <workItem from="1575874466386" duration="2000" />
+      <workItem from="1575874754215" duration="5435000" />
+=======
+      <workItem from="1575442774894" duration="20000" />
+      <workItem from="1575442798569" duration="1843000" />
+      <workItem from="1575449998624" duration="19000" />
+      <workItem from="1575450567464" duration="7000" />
+      <workItem from="1575508745959" duration="202000" />
+      <workItem from="1575688547099" duration="8443000" />
+      <workItem from="1575786577728" duration="15604000" />
+      <workItem from="1575859209486" duration="2728000" />
+      <workItem from="1575874066680" duration="361000" />
+      <workItem from="1575874466386" duration="2000" />
+      <workItem from="1575874754215" duration="5643000" />
+>>>>>>> Stashed changes
     </task>
     <task id="LOCAL-00001" summary="删除一些多余的代码，添加了视图管理和首选项弹出窗口">
       <created>1563637600172</created>
@@ -339,6 +386,16 @@
     <option name="localTasksCounter" value="9" />
     <servers />
   </component>
+<<<<<<< Updated upstream
+||||||| merged common ancestors
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="697387000" />
+  </component>
+=======
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="697595000" />
+  </component>
+>>>>>>> Stashed changes
   <component name="TodoView">
     <todo-panel id="selected-file">
       <is-autoscroll-to-source value="true" />

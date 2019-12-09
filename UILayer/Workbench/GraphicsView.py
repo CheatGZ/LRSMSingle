@@ -570,6 +570,13 @@ class GraphicsViewTest(GraphicsView):
             elif self.gadget == ToolsToolBar.HandGripTool:
                 self.temp_shortcut = 6
             self.set_gadget(ToolsToolBar.HandGripTool)
+            if not self.is_key_pressed and event.key() == Qt.Key_Control:
+                self.is_key_pressed = True
+                self.temp_gadget = self.gadget
+                if self.gadget == ToolsToolBar.ZoomInTool:
+                    self.set_gadget(ToolsToolBar.ZoomOutTool)
+                elif self.gadget == ToolsToolBar.ZoomOutTool:
+                    self.set_gadget(ToolsToolBar.ZoomInTool)
         if event.key() == Qt.Key_Shift and self.is_creating_polygon:
             try:
                 self.created_polygon()
@@ -623,7 +630,7 @@ class GraphicsViewTest(GraphicsView):
             self.set_gadget(ToolsToolBar.HandGripTool)
 
     def keyReleaseEvent(self, event: QKeyEvent) -> None:
-        if event.key() == Qt.Key_Space:
+        if event.key() == Qt.Key_Space or event.key() == Qt.Key_Control:
             if self.is_key_pressed:
                 self.set_tool_gadget_signal.emit(self.temp_shortcut)
                 self.set_gadget(self.temp_gadget)
