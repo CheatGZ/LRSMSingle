@@ -230,8 +230,8 @@ class GraphicsViewTest(GraphicsView):
         self._eraser_cursor_img = self._eraser_cursor_img.scaled(self._eraser_cursor_img.height() + 50,
                                                                  self._eraser_cursor_img.width() + 50,
                                                                  Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
-        self._zoom_in_img = QPixmap(QImage(":/in.png")).scaled(20, 20, Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
-        self._zoom_out_img = QPixmap(QImage(":/out.png")).scaled(20, 20, Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
+        self._zoom_in_img = QPixmap(QImage(":/in.png")).scaled(35, 35, Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
+        self._zoom_out_img = QPixmap(QImage(":/out.png")).scaled(30, 30, Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
 
         self.click_signal.connect(self.left_mouse_click)
         self.dragging_signal.connect(self.left_mouse_press_and_moving)
@@ -274,8 +274,14 @@ class GraphicsViewTest(GraphicsView):
         elif self.gadget == ToolsToolBar.HandGripTool:
             self.setCursor(Qt.OpenHandCursor)
         elif self.gadget == ToolsToolBar.ZoomInTool:
+            # zoom_in_img = self._zoom_in_img.scaled(self._zoom_in_img.height() * 2,
+            #                                        self._zoom_in_img.width() * 2,
+            #                                        Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
             self.setCursor(QCursor(self._zoom_in_img))
         elif self.gadget == ToolsToolBar.ZoomOutTool:
+            # zoom_out_img = self._eraser_cursor_img.scaled(self._zoom_out_img.height() * 2,
+            #                                               self._zoom_out_img.width() * 2,
+            #                                               Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
             self.setCursor(QCursor(self._zoom_out_img))
         else:
             self.setCursor(Qt.ArrowCursor)
@@ -338,7 +344,7 @@ class GraphicsViewTest(GraphicsView):
         self.last_cursor_pos = mouse_point
 
     def zoom_by_mouse_click(self, is_in=True):
-        factor = 1.25 if is_in else 0.75
+        factor = 1.15 if is_in else 1/1.15
         self.zoom_by_given_factor(factor, factor)
 
     def left_mouse_moved_and_release(self, event: QMouseEvent):
@@ -561,8 +567,6 @@ class GraphicsViewTest(GraphicsView):
                 self.temp_shortcut = 6
             elif self.gadget == ToolsToolBar.ZoomInTool:
                 self.temp_shortcut = 7
-            elif self.gadget == ToolsToolBar.ZoomOutTool:
-                self.temp_shortcut = 8
             self.set_gadget(ToolsToolBar.HandGripTool)
             self.set_tool_gadget_signal.emit(6)
         if not self.is_key_pressed and event.key() == Qt.Key_Control:
@@ -571,11 +575,8 @@ class GraphicsViewTest(GraphicsView):
             if self.gadget == ToolsToolBar.ZoomInTool:
                 self.set_gadget(ToolsToolBar.ZoomOutTool)
                 self.temp_shortcut = 7
-                self.set_tool_gadget_signal.emit(8)
             elif self.gadget == ToolsToolBar.ZoomOutTool:
                 self.set_gadget(ToolsToolBar.ZoomInTool)
-                self.temp_shortcut = 8
-                self.set_tool_gadget_signal.emit(7)
 
         if event.key() == Qt.Key_Shift and self.is_creating_polygon:
             try:
@@ -632,19 +633,15 @@ class GraphicsViewTest(GraphicsView):
             self.temp_shortcut = 7
             self.set_tool_gadget_signal.emit(7)
             self.set_gadget(ToolsToolBar.ZoomInTool)
-        elif event.key() == Qt.Key_8:
-            self.temp_shortcut = 8
-            self.set_tool_gadget_signal.emit(8)
-            self.set_gadget(ToolsToolBar.ZoomOutTool)
 
     def keyReleaseEvent(self, event: QKeyEvent) -> None:
         if event.key() == Qt.Key_Space or event.key() == Qt.Key_Control:
             if self.is_key_pressed:
-                if event.key() == Qt.Key_Control:
-                    if self.temp_shortcut == 8 or self.temp_shortcut == 7:
-                        self.set_tool_gadget_signal.emit(self.temp_shortcut)
-                else:
-                    self.set_tool_gadget_signal.emit(self.temp_shortcut)
+                # if event.key() == Qt.Key_Control:
+                #     if self.temp_shortcut == 7:
+                #         self.set_tool_gadget_signal.emit(self.temp_shortcut)
+                # else:
+                #self.set_tool_gadget_signal.emit(self.temp_shortcut)
                 self.set_gadget(self.temp_gadget)
         elif event.key() == Qt.Key_B and event.modifiers() & Qt.ControlModifier and self.polygon_points:
             self.polygon_points.pop()
