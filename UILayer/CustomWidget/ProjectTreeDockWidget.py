@@ -221,7 +221,7 @@ class MarkTreeItem(AbstractProjectTreeItem):
         self._mark_item = mark_item
         self.setText(0, mark_item.item_name)
         self.setWhatsThis(0, ProjectDockWidget.MAKE_ITEM)
-        self.setIcon(0, QIcon(":/mark_item.jpg"))
+        self.setIcon(0, QIcon(":/mark_item.png"))
         self._mark_item.mark_item_name_changed.connect(self._name_changed)
 
     def _name_changed(self):

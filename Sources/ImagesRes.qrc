@@ -32,7 +32,6 @@
         <file alias="dock-restore@2x.png">Images/dock-restore@2x.png</file>
         <file alias="file.png">Images/file.png</file>
         <file alias="img_icon.png">Images/img_icon.png</file>
-        <file alias="mark_item.jpg">Images/mark_item.jpg</file>
         <file alias="tiled-icon.ico">Images/tiled-icon.ico</file>
         <file alias="stock-tool-move-22.png">Icons/22x22/stock-tool-move-22.png</file>
         <file alias="ellipse-fill.png">Icons/22x22/ellipse-fill.png</file>
@@ -40,5 +39,6 @@
         <file alias="zoom-out.png">Icons/24x24/zoom-out.png</file>
         <file alias="out.png">Icons/缩小.png</file>
         <file alias="in.png">Icons/放大.png</file>
+        <file alias="mark_item.png">Images/mark_item.png</file>
     </qresource>
 </RCC>

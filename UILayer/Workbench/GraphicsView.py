@@ -266,6 +266,7 @@ class GraphicsViewTest(GraphicsView):
         elif self.gadget == ToolsToolBar.PolygonTool:
             self.setCursor(Qt.ArrowCursor)
         elif self.gadget == ToolsToolBar.EraserTool:
+            self.temp_shortcut = 2
             cursor_img = self._eraser_cursor_img.scaled(self.transform().m11() * self._eraser_size,
                                                         self.transform().m11() * self._eraser_size,
                                                         Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
@@ -563,13 +564,19 @@ class GraphicsViewTest(GraphicsView):
             elif self.gadget == ToolsToolBar.ZoomOutTool:
                 self.temp_shortcut = 8
             self.set_gadget(ToolsToolBar.HandGripTool)
+            self.set_tool_gadget_signal.emit(6)
         if not self.is_key_pressed and event.key() == Qt.Key_Control:
             self.is_key_pressed = True
             self.temp_gadget = self.gadget
             if self.gadget == ToolsToolBar.ZoomInTool:
                 self.set_gadget(ToolsToolBar.ZoomOutTool)
+                self.temp_shortcut = 7
+                self.set_tool_gadget_signal.emit(8)
             elif self.gadget == ToolsToolBar.ZoomOutTool:
                 self.set_gadget(ToolsToolBar.ZoomInTool)
+                self.temp_shortcut = 8
+                self.set_tool_gadget_signal.emit(7)
+
 
         if event.key() == Qt.Key_Shift and self.is_creating_polygon:
             try:
@@ -634,7 +641,11 @@ class GraphicsViewTest(GraphicsView):
     def keyReleaseEvent(self, event: QKeyEvent) -> None:
         if event.key() == Qt.Key_Space or event.key() == Qt.Key_Control:
             if self.is_key_pressed:
-                self.set_tool_gadget_signal.emit(self.temp_shortcut)
+                if event.key() == Qt.Key_Control:
+                    if self.temp_shortcut == 8 or self.temp_shortcut == 7:
+                        self.set_tool_gadget_signal.emit(self.temp_shortcut)
+                else:
+                    self.set_tool_gadget_signal.emit(self.temp_shortcut)
                 self.set_gadget(self.temp_gadget)
         elif event.key() == Qt.Key_B and event.modifiers() & Qt.ControlModifier and self.polygon_points:
             self.polygon_points.pop()
