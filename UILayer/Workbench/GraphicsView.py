@@ -274,14 +274,8 @@ class GraphicsViewTest(GraphicsView):
         elif self.gadget == ToolsToolBar.HandGripTool:
             self.setCursor(Qt.OpenHandCursor)
         elif self.gadget == ToolsToolBar.ZoomInTool:
-            # zoom_in_img = self._zoom_in_img.scaled(self._zoom_in_img.height() * 2,
-            #                                        self._zoom_in_img.width() * 2,
-            #                                        Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
             self.setCursor(QCursor(self._zoom_in_img))
         elif self.gadget == ToolsToolBar.ZoomOutTool:
-            # zoom_out_img = self._eraser_cursor_img.scaled(self._zoom_out_img.height() * 2,
-            #                                               self._zoom_out_img.width() * 2,
-            #                                               Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
             self.setCursor(QCursor(self._zoom_out_img))
         else:
             self.setCursor(Qt.ArrowCursor)
@@ -344,7 +338,7 @@ class GraphicsViewTest(GraphicsView):
         self.last_cursor_pos = mouse_point
 
     def zoom_by_mouse_click(self, is_in=True):
-        factor = 1.15 if is_in else 1/1.15
+        factor = 1.15 if is_in else 1 / 1.15
         self.zoom_by_given_factor(factor, factor)
 
     def left_mouse_moved_and_release(self, event: QMouseEvent):
@@ -485,7 +479,8 @@ class GraphicsViewTest(GraphicsView):
                 QGraphicsView.mousePressEvent(self, event)
         elif event.button() == Qt.RightButton:
             if self.is_creating_polygon:
-                self.scene().removeItem(self.border)
+                if self.border is not None:
+                    self.scene().removeItem(self.border)
                 self.border = None
                 self.is_creating_polygon = False
                 self.polygon_points = []
@@ -550,41 +545,19 @@ class GraphicsViewTest(GraphicsView):
             QGraphicsView.mouseReleaseEvent(self, event)
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
-        if event.key() == Qt.Key_Space and not self.is_key_pressed:
-            self.is_key_pressed = True
-            self.temp_gadget = self.gadget
-            if self.gadget == ToolsToolBar.BrowserImageTool:
-                self.temp_shortcut = 1
-            elif self.gadget == ToolsToolBar.EraserTool:
-                self.temp_shortcut = 2
-            elif self.gadget == ToolsToolBar.RectangleTool:
-                self.temp_shortcut = 3
-            elif self.gadget == ToolsToolBar.PolygonTool:
-                self.temp_shortcut = 4
-            elif self.gadget == ToolsToolBar.MagicTool:
-                self.temp_shortcut = 5
-            elif self.gadget == ToolsToolBar.HandGripTool:
-                self.temp_shortcut = 6
-            elif self.gadget == ToolsToolBar.ZoomInTool:
-                self.temp_shortcut = 7
-            self.set_gadget(ToolsToolBar.HandGripTool)
-            self.set_tool_gadget_signal.emit(6)
-        if not self.is_key_pressed and event.key() == Qt.Key_Control:
-            self.is_key_pressed = True
-            self.temp_gadget = self.gadget
-            if self.gadget == ToolsToolBar.ZoomInTool:
-                self.set_gadget(ToolsToolBar.ZoomOutTool)
-                self.temp_shortcut = 7
-            elif self.gadget == ToolsToolBar.ZoomOutTool:
-                self.set_gadget(ToolsToolBar.ZoomInTool)
-
-        if event.key() == Qt.Key_Shift and self.is_creating_polygon:
-            try:
-                self.created_polygon()
-            except Exception as e:
-                print(e)
+        # esc退出创建选框
+        if event.key() == Qt.Key_Escape:
+            print(self.is_creating_border)
+            if self.is_creating_polygon:
+                print("cheatGZ esc")
+                if self.border is not None:
+                    self.scene().removeItem(self.border)
+                self.border = None
+                self.is_creating_polygon = False
+                self.is_creating_border = False
+                self.polygon_points = []
         # 方向键移动图片
-        if event.key() == Qt.Key_Up or event.key() == Qt.Key_W:
+        elif event.key() == Qt.Key_Up or event.key() == Qt.Key_W:
             dy = 50
             vertical_scrollbar = self.verticalScrollBar()
             if vertical_scrollbar.isVisible():
@@ -634,14 +607,44 @@ class GraphicsViewTest(GraphicsView):
             self.set_tool_gadget_signal.emit(7)
             self.set_gadget(ToolsToolBar.ZoomInTool)
 
+        if event.key() == Qt.Key_Space and not self.is_key_pressed:
+            self.is_key_pressed = True
+            self.temp_gadget = self.gadget
+            if self.gadget == ToolsToolBar.BrowserImageTool:
+                self.temp_shortcut = 1
+            elif self.gadget == ToolsToolBar.EraserTool:
+                self.temp_shortcut = 2
+            elif self.gadget == ToolsToolBar.RectangleTool:
+                self.temp_shortcut = 3
+            elif self.gadget == ToolsToolBar.PolygonTool:
+                self.temp_shortcut = 4
+            elif self.gadget == ToolsToolBar.MagicTool:
+                self.temp_shortcut = 5
+            elif self.gadget == ToolsToolBar.HandGripTool:
+                self.temp_shortcut = 6
+            elif self.gadget == ToolsToolBar.ZoomInTool:
+                self.temp_shortcut = 7
+            self.set_gadget(ToolsToolBar.HandGripTool)
+            self.set_tool_gadget_signal.emit(6)
+        if not self.is_key_pressed and event.key() == Qt.Key_Control:
+            self.is_key_pressed = True
+            self.temp_gadget = self.gadget
+            if self.gadget == ToolsToolBar.ZoomInTool:
+                self.set_gadget(ToolsToolBar.ZoomOutTool)
+                self.temp_shortcut = 7
+            elif self.gadget == ToolsToolBar.ZoomOutTool:
+                self.set_gadget(ToolsToolBar.ZoomInTool)
+
+        if event.key() == Qt.Key_Shift and self.is_creating_polygon:
+            try:
+                self.created_polygon()
+            except Exception as e:
+                print(e)
+
     def keyReleaseEvent(self, event: QKeyEvent) -> None:
         if event.key() == Qt.Key_Space or event.key() == Qt.Key_Control:
             if self.is_key_pressed:
-                # if event.key() == Qt.Key_Control:
-                #     if self.temp_shortcut == 7:
-                #         self.set_tool_gadget_signal.emit(self.temp_shortcut)
-                # else:
-                #self.set_tool_gadget_signal.emit(self.temp_shortcut)
+                self.set_tool_gadget_signal.emit(self.temp_shortcut)
                 self.set_gadget(self.temp_gadget)
         elif event.key() == Qt.Key_B and event.modifiers() & Qt.ControlModifier and self.polygon_points:
             self.polygon_points.pop()
