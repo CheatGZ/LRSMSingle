@@ -264,11 +264,11 @@ class GraphicsViewTest(GraphicsView):
         if self.gadget == ToolsToolBar.RectangleTool:
             self.setCursor(Qt.CrossCursor)
         elif self.gadget == ToolsToolBar.PolygonTool:
-            self.setCursor(Qt.ArrowCursor)
+            self.setCursor(Qt.CrossCursor)
         elif self.gadget == ToolsToolBar.EraserTool:
             self.temp_shortcut = 2
-            cursor_img = self._eraser_cursor_img.scaled(self.transform().m11() * self._eraser_size,
-                                                        self.transform().m11() * self._eraser_size,
+            cursor_img = self._eraser_cursor_img.scaled(self.transform().m11() * self._eraser_size * 2,
+                                                        self.transform().m11() * self._eraser_size * 2,
                                                         Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
             self.setCursor(QCursor(cursor_img))
         elif self.gadget == ToolsToolBar.HandGripTool:
@@ -521,7 +521,7 @@ class GraphicsViewTest(GraphicsView):
 
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
         """"""
-        if  self.gadget == ToolsToolBar.ZoomInTool:
+        if self.gadget == ToolsToolBar.ZoomInTool:
             self.zoom_by_mouse_click(True)
         if self.gadget == ToolsToolBar.ZoomOutTool:
             self.zoom_by_mouse_click(False)
@@ -576,7 +576,6 @@ class GraphicsViewTest(GraphicsView):
                 self.set_gadget(ToolsToolBar.ZoomInTool)
                 self.temp_shortcut = 8
                 self.set_tool_gadget_signal.emit(7)
-
 
         if event.key() == Qt.Key_Shift and self.is_creating_polygon:
             try:
