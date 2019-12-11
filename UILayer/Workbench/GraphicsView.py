@@ -577,35 +577,6 @@ class GraphicsViewTest(GraphicsView):
             horizontal_scrollbar = self.horizontalScrollBar()
             if horizontal_scrollbar.isVisible():
                 horizontal_scrollbar.setValue(horizontal_scrollbar.value() - dx)
-        # 工具栏快捷键
-        elif event.key() == Qt.Key_1:
-            self.temp_shortcut = 1
-            self.set_tool_gadget_signal.emit(1)
-            self.set_gadget(ToolsToolBar.BrowserImageTool)
-        elif event.key() == Qt.Key_2:
-            self.temp_shortcut = 2
-            self.set_tool_gadget_signal.emit(2)
-            self.set_gadget(ToolsToolBar.EraserTool)
-        elif event.key() == Qt.Key_3:
-            self.temp_shortcut = 3
-            self.set_tool_gadget_signal.emit(3)
-            self.set_gadget(ToolsToolBar.RectangleTool)
-        elif event.key() == Qt.Key_4:
-            self.temp_shortcut = 4
-            self.set_tool_gadget_signal.emit(4)
-            self.set_gadget(ToolsToolBar.PolygonTool)
-        elif event.key() == Qt.Key_5:
-            self.temp_shortcut = 5
-            self.set_tool_gadget_signal.emit(5)
-            self.set_gadget(ToolsToolBar.MagicTool)
-        elif event.key() == Qt.Key_6:
-            self.temp_shortcut = 6
-            self.set_tool_gadget_signal.emit(6)
-            self.set_gadget(ToolsToolBar.HandGripTool)
-        elif event.key() == Qt.Key_7:
-            self.temp_shortcut = 7
-            self.set_tool_gadget_signal.emit(7)
-            self.set_gadget(ToolsToolBar.ZoomInTool)
 
         if event.key() == Qt.Key_Space and not self.is_key_pressed:
             self.is_key_pressed = True

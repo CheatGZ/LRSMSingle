@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b0562d30-6635-4c9b-a37c-ed1821e05bcd" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/LSRMSingle.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/LSRMSingle.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Documents/Document.py" beforeDir="false" afterPath="$PROJECT_DIR$/Documents/Document.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UILayer/MainWindowPk/MainToolBar.py" beforeDir="false" afterPath="$PROJECT_DIR$/UILayer/MainWindowPk/MainToolBar.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UILayer/MainWindowPk/MainWindowUi.py" beforeDir="false" afterPath="$PROJECT_DIR$/UILayer/MainWindowPk/MainWindowUi.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UILayer/Workbench/GraphicsView.py" beforeDir="false" afterPath="$PROJECT_DIR$/UILayer/Workbench/GraphicsView.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -351,7 +352,14 @@
       <option name="project" value="LOCAL" />
       <updated>1575979532989</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="多边形选区创建优化">
+      <created>1575992663264</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1575992663264</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TodoView">
@@ -399,7 +407,8 @@
     <MESSAGE value="WASD快捷移动图片,为缩放工具添加快捷键" />
     <MESSAGE value="WASD快捷移动图片" />
     <MESSAGE value="橡皮工具优化" />
-    <option name="LAST_COMMIT_MESSAGE" value="橡皮工具优化" />
+    <MESSAGE value="多边形选区创建优化" />
+    <option name="LAST_COMMIT_MESSAGE" value="多边形选区创建优化" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/LSRMSingalVersion3$Id.coverage" NAME="Id Coverage Results" MODIFIED="1562661307521" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Manager" />
@@ -417,7 +426,7 @@
     <SUITE FILE_PATH="coverage/LSRMSingalVersion3$diagram_pra2.coverage" NAME="diagram_pra2 Coverage Results" MODIFIED="1562657761139" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="D:/学习文件/python_learning/用于集成/侯" />
     <SUITE FILE_PATH="coverage/LSRMSingle$App.coverage" NAME="App Coverage Results" MODIFIED="1574219687765" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Application" />
     <SUITE FILE_PATH="coverage/LSRMSingalVersion3$LrsmProxyStyle.coverage" NAME="LrsmProxyStyle Coverage Results" MODIFIED="1563550359320" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/WindowStyle" />
-    <SUITE FILE_PATH="coverage/LSRMSingle$LSRMSingle.coverage" NAME="LSRMSingle Coverage Results" MODIFIED="1575992492740" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Application" />
+    <SUITE FILE_PATH="coverage/LSRMSingle$LSRMSingle.coverage" NAME="LSRMSingle Coverage Results" MODIFIED="1575997814498" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Application" />
     <SUITE FILE_PATH="coverage/LSRMSingalVersion3$Progress.coverage" NAME="Progress Coverage Results" MODIFIED="1562550541605" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/UILayer/ProgressBar" />
     <SUITE FILE_PATH="coverage/LSRMSingalVersion3$StyleHelper.coverage" NAME="StyleHelper Coverage Results" MODIFIED="1563543131855" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/WindowStyle" />
     <SUITE FILE_PATH="coverage/LSRMSingalVersion3$MainWindow__1_.coverage" NAME="MainWindow (1) Coverage Results" MODIFIED="1563358612315" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/UILayer/MainWindowPk" />

@@ -124,12 +124,6 @@ class Document(QWidget, ProjectDocument):
 
     # 通知mainwindow改变工具栏状态
     def set_short_cut_gadget(self, shortcut):
-        if shortcut == 1:
-            self.last_shortcut = 1
-            self.browser_result()
-        elif self.last_shortcut == 1:
-            self.last_shortcut = 0
-            self.end_browser()
         self.set_shortcut_gadget_signal.emit(shortcut)
 
     def about_to_cmp(self, project_documents: ProjectDocument = None):
