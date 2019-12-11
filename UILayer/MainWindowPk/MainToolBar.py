@@ -269,7 +269,6 @@ class ToolsToolBar(QToolBar):
         self._polygon_tool = ActionManager.action(Id("Polygon"))
         self._magic_tool = QAction()
         self._hand_grip = QAction()  # 抓手功能的创建
-        self._hand_grip = QAction()   # 抓手功能的创建
         self._zoom_in_tool = QAction()
 
         self._browser_result_tool.setIcon(QIcon(":/plugin.png"))
@@ -342,6 +341,7 @@ class ToolsToolBar(QToolBar):
         self.parent().addToolBar(self._selection_option_toolbar)
         self.parent().addToolBar(self._eraser_option_toolbar)
         self._eraser_option_toolbar.setHidden(True)
+        tools_group = self._tools_group
 
         self._selection_option_toolbar.selection_option_changed.connect(self.selection_option_changed)
         self._eraser_option_toolbar.eraser_size_changed.connect(self.eraser_size_changed)

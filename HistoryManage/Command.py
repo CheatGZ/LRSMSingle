@@ -12,21 +12,28 @@ from UILayer.Workbench.BorderItem import BorderItem, SelectionItem
 
 class AddSelectionItem(QUndoCommand):
 
-    def __init__(self, scene: QGraphicsScene, item: SelectionItem, parent=None):
+    def __init__(self, scene: QGraphicsScene, item: SelectionItem, item_old, string, parent=None):
         super(AddSelectionItem, self).__init__(parent)
         self.scene = scene
         self.item = item
+        self.item_old = item_old
         self.init_pos = item.pos()
-        self.setText("创建选区")
+        self.operation = string
 
     def redo(self) -> None:
         self.scene.addItem(self.item)
         self.scene.clearSelection()
+        if isinstance(self.item_old, SelectionItem):
+            self.item_old.hide()
         self.item.setSelected(True)
-        self.setText("创建选区")
+        self.setText(self.operation)
+        self.scene.update()
 
     def undo(self) -> None:
+        if isinstance(self.item_old, SelectionItem):
+            self.item_old.show()
         self.scene.removeItem(self.item)
+        self.scene.update()
 
 
 class AddItemCommand(QUndoCommand):

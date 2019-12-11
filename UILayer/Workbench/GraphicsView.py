@@ -577,6 +577,34 @@ class GraphicsViewTest(GraphicsView):
             horizontal_scrollbar = self.horizontalScrollBar()
             if horizontal_scrollbar.isVisible():
                 horizontal_scrollbar.setValue(horizontal_scrollbar.value() - dx)
+        # 为各个工具添加快捷键,依次是预览图片、橡皮檫、矩形选择框、多边形选择框、魔法棒、抓手
+        if event.key() == Qt.Key_1:
+            self.temp_gadget = self.gadget
+            print('BrowserImageTool')
+            self.set_gadget(ToolsToolBar.BrowserImageTool)
+        if event.key() == Qt.Key_2:
+            self.temp_gadget = self.gadget
+            print('EraserTool')
+            self.set_gadget(ToolsToolBar.EraserTool)
+        if event.key() == Qt.Key_3:
+            self.temp_gadget = self.gadget
+            print('RectangleTool')
+            self.set_gadget(ToolsToolBar.RectangleTool)
+        if event.key() == Qt.Key_4:
+            self.temp_gadget = self.gadget
+            print('PolygonTool')
+            self.set_gadget(ToolsToolBar.PolygonTool)
+        if event.key() == Qt.Key_5:
+            self.temp_gadget = self.gadget
+            print('MagicTool')
+            self.set_gadget(ToolsToolBar.MagicTool)
+        if event.key() == Qt.Key_6:
+            self.temp_gadget = self.gadget
+            print('HandGripTool')
+            self.set_gadget(ToolsToolBar.HandGripTool)
+
+
+
 
         if event.key() == Qt.Key_Space and not self.is_key_pressed:
             self.is_key_pressed = True

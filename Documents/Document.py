@@ -264,24 +264,35 @@ class Document(QWidget, ProjectDocument):
         """TODO"""
 
     def created_border(self, border: SelectionItem):
-
+        self._workbench_scene.removeItem(self._selection_item)
         if self._selection_option == SelectionOptionToolBar.Replace:
-            self._workbench_scene.removeItem(self._selection_item)
+            # self._workbench_scene.removeItem(self._selection_item)
             self._selection_item = border
-
-            self.__undo_stack.push(AddSelectionItem(self._workbench_scene, self._selection_item))
+            self._operation = '新建选区'
+            self.__undo_stack.push(AddSelectionItem(self._workbench_scene, self._selection_item, None, self._operation))  # 调用Push时会自动调用一次redo方法
 
         elif self._selection_option == SelectionOptionToolBar.Subtract:
             if self._selection_item:
-                self._selection_item -= border
+                self._selection_item_subtract = self._selection_item - border
+                self._operation = '消除选区'
+                self.__undo_stack.push(AddSelectionItem(self._workbench_scene, self._selection_item_subtract, self._selection_item,self._operation))  # 调用Push时会自动调用一次redo方法
+                self._selection_item = self._selection_item_subtract
+
         elif self._selection_option == SelectionOptionToolBar.Add:
-            if not self._selection_item:
-                self._selection_item = border
-            else:
-                self._selection_item += border
+            if self._selection_item:
+                self._selection_item_add = self._selection_item + border
+                self._operation = '添加选区'
+                self.__undo_stack.push(AddSelectionItem(self._workbench_scene, self._selection_item_add, self._selection_item, self._operation))  # 调用Push时会自动调用一次redo方法
+                self._selection_item = self._selection_item_add
+
         elif self._selection_option == SelectionOptionToolBar.Intersect:
             if self._selection_item:
-                self._selection_item &= border
+                self._selection_item_intersect = self._selection_item & border
+                self._operation = '选区相交'
+                self.__undo_stack.push(AddSelectionItem(self._workbench_scene, self._selection_item_intersect, self._selection_item, self._operation))  # 调用Push时会自动调用一次redo方法
+                self._selection_item = self._selection_item_intersect
+
+        print(len(self.__undo_stack), '***')  # 输出命令栈中的命令个数
 
         if self._selection_item:
             if self._selection_item.is_empty():
@@ -346,6 +357,7 @@ class Document(QWidget, ProjectDocument):
             self._selection_item.setVisible(True)
 
     def get_sub_image_in(self, item: SelectionItem) -> [QImage, None]:
+
         rect = item.rectangle()
         if self.is_big_img:
             """"""
