@@ -21,6 +21,7 @@ class BorderItem(QGraphicsObject):
 
         self.shape = shape
         self._item_path = QPainterPath(QPoint(0, 0))
+        self._vertex_path = QPainterPath(QPoint(0, 0))
         self._pen = QPen()
         self._pen.setWidthF(adjust_pen_width(PEN_STANDARD_WIDTH, view_scale))
 
@@ -71,6 +72,9 @@ class BorderItem(QGraphicsObject):
 
     def set_item_path_by_path(self, path):
         self._item_path = path
+
+    def set_item_path_by_vertex_path(self, path):
+        self._vertex_path = path
 
     def set_pen_width_by_scale(self, width: [int, float]):
         pen_width = adjust_pen_width(PEN_STANDARD_WIDTH, width)
@@ -127,15 +131,19 @@ class BorderItem(QGraphicsObject):
         return self._item_path.boundingRect().adjusted(0, 0, 2, 2)
 
     def paint(self, painter: QPainter, option, widget=None) -> None:
-        self._pen.setColor(Qt.white)
-        self._pen.setStyle(Qt.SolidLine)
-        painter.setPen(self._pen)
-        painter.drawPath(self._item_path)
 
-        self._pen.setColor(Qt.black)
-        self._pen.setDashPattern(self._dash_pattern)
+        self._pen.setColor(Qt.green)
+        self._pen.setStyle(Qt.SolidLine)
+        self._pen.setWidth(max(1, int(round(2.0 / 1.0))))
         painter.setPen(self._pen)
+        brush = QBrush(Qt.green)
+        painter.fillPath(self._vertex_path, brush)
         painter.drawPath(self._item_path)
+        painter.drawPath(self._vertex_path)
+        # self._pen.setColor(Qt.black)
+        # self._pen.setDashPattern(self._dash_pattern)
+        # painter.setPen(self._pen)
+        # painter.drawPath(self._item_path)
 
     def __add__(self, other):
         """

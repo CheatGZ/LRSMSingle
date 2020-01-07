@@ -1,5 +1,6 @@
 import time
 
+from PyQt5 import QtGui
 from PyQt5.QtCore import pyqtSignal, QPoint, Qt
 from PyQt5.QtGui import QTransform, QPainter, QMouseEvent, QKeyEvent, \
     QWheelEvent, QImage, QPixmap, QCursor, QPainterPath, QBrush, QPen, QPainterPathStroker
@@ -8,6 +9,13 @@ from PyQt5.QtWidgets import QGraphicsView
 from UILayer.Workbench.BorderItem import SelectionItem, BorderItem, OutlineItem
 from UILayer.MainWindowPk.MainToolBar import ToolsToolBar
 from Manager.MarkItemManager import MarkItemManager
+
+DEFAULT_LINE_COLOR = QtGui.QColor(0, 255, 0, 128)
+DEFAULT_FILL_COLOR = QtGui.QColor(255, 0, 0, 128)
+DEFAULT_SELECT_LINE_COLOR = QtGui.QColor(255, 255, 255)
+DEFAULT_SELECT_FILL_COLOR = QtGui.QColor(0, 128, 255, 155)
+DEFAULT_VERTEX_FILL_COLOR = QtGui.QColor(0, 255, 0, 255)
+DEFAULT_HVERTEX_FILL_COLOR = QtGui.QColor(255, 0, 0)
 
 
 class GraphicsView(QGraphicsView):
@@ -178,10 +186,25 @@ class GraphicsViewTest(GraphicsView):
     """
     只负责选区的创建
     """
+    P_SQUARE, P_ROUND = 0, 1
+
+    MOVE_VERTEX, NEAR_VERTEX = 0, 1
+
     # 自定义点击间隔
     CLICK_INVERT_TIME = .45
     MAX_ZOOM_MULTIPLE = 41
     MIN_ZOOM_MULTIPLE = 0.08
+
+    # The following class variables influence the drawing of all shape objects.
+    line_color = DEFAULT_LINE_COLOR
+    fill_color = DEFAULT_FILL_COLOR
+    select_line_color = DEFAULT_SELECT_LINE_COLOR
+    select_fill_color = DEFAULT_SELECT_FILL_COLOR
+    vertex_fill_color = DEFAULT_VERTEX_FILL_COLOR
+    hvertex_fill_color = DEFAULT_HVERTEX_FILL_COLOR
+    point_type = P_ROUND
+    point_size = 8
+    scale_size = 1.0
 
     click_signal = pyqtSignal(QMouseEvent)
     dragging_signal = pyqtSignal(QMouseEvent)
@@ -238,6 +261,16 @@ class GraphicsViewTest(GraphicsView):
         self.dragged_signal.connect(self.left_mouse_moved_and_release)
         self.current_tool_changed_signal.connect(self.current_tool_changed)
         self.eraser_zoom_signal.connect(self.eraser_img_set)
+        # 关于多边形画点
+        self.fill = True
+        self.selected = False
+        self._highlightIndex = None
+        self._highlightMode = self.NEAR_VERTEX
+        self._highlightSettings = {
+            self.NEAR_VERTEX: (4, self.P_ROUND),
+            self.MOVE_VERTEX: (1.5, self.P_SQUARE),
+        }
+
 
     def get_border_item(self):
         return self.border
@@ -374,12 +407,36 @@ class GraphicsViewTest(GraphicsView):
             item.setFocus()
 
     def counter_polygon_path(self, pos=None):
-        new_path = QPainterPath(QPoint(0, 0))
-        for point in self.polygon_points:
-            new_path.lineTo(point)
-        if pos:
-            new_path.lineTo(self.border.mapFromScene(self.mapToScene(pos)))
-        return new_path
+        if self.polygon_points:
+            new_path = QPainterPath(QPoint(0, 0))  # QPoint(0, 0)
+            vrtx_path = QPainterPath(QPoint(0, 0))
+            new_path.moveTo(self.polygon_points[0])
+            for i, p in enumerate(self.polygon_points):
+                # for point in self.polygon_points:
+                new_path.lineTo(p)
+                self.draw_vertex(vrtx_path, i)
+            if pos:
+                new_path.lineTo(self.border.mapFromScene(self.mapToScene(pos)))
+            return new_path, vrtx_path
+
+    def draw_vertex(self, path, i):
+        d = self.point_size / self.scale_size
+        shape = self.point_type
+        point = self.polygon_points[i]
+        if i == self._highlightIndex:
+            size, shape = self._highlightSettings[self._highlightMode]
+            d *= size
+        if self._highlightIndex is not None:
+            self.vertex_fill_color = self.hvertex_fill_color
+        else:
+            self.vertex_fill_color = self.vertex_fill_color
+        if shape == self.P_SQUARE:
+            path.addRect(point.x() - d / 2, point.y() - d / 2, d, d)
+        elif shape == self.P_ROUND:
+            path.addEllipse(point, d / 2.0, d / 2.0)
+
+        else:
+            assert False, "unsupported vertex shape"
 
     def created_border(self):
         self.is_creating_border = False
@@ -399,10 +456,18 @@ class GraphicsViewTest(GraphicsView):
         return False
 
     def created_polygon(self):
-        path = self.counter_polygon_path()
+        # path = self.counter_polygon_path()
+        # self.polygon_points = []
+        # path.closeSubpath()
+        # self.border.set_item_path_by_path(path=path)
+        # self.created_border()
+
+        path, path_vertex = self.counter_polygon_path()
         self.polygon_points = []
         path.closeSubpath()
+        path_vertex.closeSubpath()
         self.border.set_item_path_by_path(path=path)
+        self.border.set_item_path_by_vertex_path(path=path_vertex)
         self.created_border()
 
     def creating_polygon(self, pos: QPoint):
@@ -412,8 +477,9 @@ class GraphicsViewTest(GraphicsView):
                 if self.auto_detect_polygon_path_close():
                     self.created_polygon()
                 else:
-                    path = self.counter_polygon_path()
+                    path, path_vertex = self.counter_polygon_path()
                     self.border.set_item_path_by_path(path=path)
+                    self.border.set_item_path_by_vertex_path(path=path_vertex)
             else:
                 self.is_creating_polygon = True
                 self.border = SelectionItem(self.mapToScene(pos), self.scene(), self.transform().m11(),
@@ -496,8 +562,14 @@ class GraphicsViewTest(GraphicsView):
             flag = True
             if self.gadget == ToolsToolBar.PolygonTool and self.is_creating_polygon:
                 try:
-                    path = self.counter_polygon_path(event.pos())
+                    # self.is_dragging = True
+                    # self.has_moving_mouse = True
+                    # self.dragging_signal.emit(event)
+                    # event.accept()
+                    # flag = False
+                    path, path_vertex = self.counter_polygon_path(event.pos())
                     self.border.set_item_path_by_path(path=path)
+                    self.border.set_item_path_by_vertex_path(path=path_vertex)
                     event.accept()
                     flag = False
                 except Exception as e:
